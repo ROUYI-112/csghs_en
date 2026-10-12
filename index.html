@@ -2,308 +2,231 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>國文段考闖關</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>段考考點闖關</title>
 <style>
-/* Layout: one card at a time, centered column ~600px; home = grid of level tiles */
-:root{
-  --bg:#EEF3F1; --surface:#FFFFFF; --ink:#16262C; --muted:#5A6B6F; --line:#D5DFDC;
-  --accent:#0E6B66; --accent-ink:#FFFFFF; --hl:#FFE45C; --hl-ink:#16262C;
-  --good:#1E8A4C; --good-bg:#E3F4EA; --bad:#C8402F; --bad-bg:#FBE7E3;
-  --display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
-  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F181B; --surface:#17242A; --ink:#E5EEEC; --muted:#93A6A8; --line:#2A3B41;
-  --accent:#45BDB2; --accent-ink:#0F181B; --hl:#E8C83A; --hl-ink:#16262C;
-  --good:#5BD08B; --good-bg:#16352A; --bad:#FF8573; --bad-bg:#3D211D; color-scheme:dark;
-}}
-:root[data-theme="dark"]{
-  --bg:#0F181B; --surface:#17242A; --ink:#E5EEEC; --muted:#93A6A8; --line:#2A3B41;
-  --accent:#45BDB2; --accent-ink:#0F181B; --hl:#E8C83A; --hl-ink:#16262C;
-  --good:#5BD08B; --good-bg:#16352A; --bad:#FF8573; --bad-bg:#3D211D; color-scheme:dark;
-}
-*{box-sizing:border-box}
-html,body{background:var(--bg)}
-body{color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.7;padding:24px 16px 48px}
-.wrap{max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;line-height:1.3}
-mark{background:linear-gradient(transparent 45%,var(--hl) 45%);color:inherit;padding:0 2px;border-radius:2px}
-:root[data-theme="dark"] mark{color:var(--ink)}
-button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-
-/* home */
-.hero{display:flex;flex-direction:column;gap:6px}
-.hero h1{font-size:2.1rem}
-.hero p{margin:0;color:var(--muted);font-size:1rem}
-.scope{display:flex;flex-wrap:wrap;gap:8px}
-.scope span{font-size:.85rem;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
-.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
-.lv{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px;text-align:left;display:flex;flex-direction:column;gap:4px;transition:transform .12s,border-color .12s}
-.lv:hover{border-color:var(--accent);transform:translateY(-2px)}
-.lv .n{font-size:.8rem;color:var(--muted);letter-spacing:.05em}
-.lv .t{font-family:var(--display);font-size:1.3rem}
-.lv .d{font-size:.88rem;color:var(--muted);line-height:1.5}
-.lv .done{color:var(--good);font-size:.85rem;font-weight:700}
-.tip{background:var(--surface);border-radius:16px;padding:16px;font-size:.95rem;border:1px dashed var(--line)}
-.tip b{font-family:var(--display);font-weight:400;font-size:1.05rem}
-
-/* quiz */
-.top{display:flex;align-items:center;gap:12px}
-.back{background:none;border:none;font-size:1rem;color:var(--muted);padding:6px 4px}
-.bar{flex:1;height:10px;background:var(--line);border-radius:999px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s}
-.count{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums;min-width:3.5em;text-align:right}
-.card{background:var(--surface);border-radius:20px;padding:22px 20px;display:flex;flex-direction:column;gap:16px;border:1px solid var(--line)}
-.src{align-self:flex-start;font-size:.8rem;padding:2px 10px;border-radius:999px;background:var(--bg);color:var(--muted)}
-.again{align-self:flex-start;font-size:.8rem;padding:2px 10px;border-radius:999px;background:var(--bad-bg);color:var(--bad)}
-.q{font-size:1.25rem;font-weight:500;line-height:1.6}
-.opts{display:flex;flex-direction:column;gap:10px}
-.opt{background:var(--bg);border:2px solid transparent;border-radius:14px;padding:14px 16px;text-align:left;display:flex;gap:12px;align-items:flex-start;transition:border-color .12s}
-.opt:hover:not(:disabled){border-color:var(--accent)}
-.opt .k{font-family:var(--display);color:var(--muted);flex:none;width:1.2em}
-.opt:disabled{cursor:default}
-.opt.right{background:var(--good-bg);border-color:var(--good)}
-.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
-.opt.dim{opacity:.45}
-.fb{border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
-.fb.ok{background:var(--good-bg)} .fb.no{background:var(--bad-bg)}
-.fb .v{font-family:var(--display);font-size:1.2rem}
-.fb.ok .v{color:var(--good)} .fb.no .v{color:var(--bad)}
-.fb p{margin:0}
-.trap{align-self:flex-start;font-size:.85rem;padding:2px 10px;border-radius:999px;border:1.5px solid var(--ink);font-weight:700}
-.next{background:var(--accent);color:var(--accent-ink);border:none;border-radius:14px;padding:14px;font-size:1.1rem;font-family:var(--display)}
-.reveal{background:var(--bg);border:2px dashed var(--accent);border-radius:14px;padding:14px;font-family:var(--display);font-size:1.1rem;color:var(--accent)}
-.ans{background:var(--good-bg);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
-.ans .lbl{font-size:.8rem;letter-spacing:.06em;color:var(--good);font-weight:700}
-.keys{display:flex;flex-wrap:wrap;gap:6px}
-.keys span{font-size:.88rem;background:var(--surface);border-radius:999px;padding:2px 10px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ghost{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;font-family:var(--display);font-size:1.05rem}
-.end{text-align:center;align-items:center}
-.end .big{font-family:var(--display);font-size:3rem;line-height:1.1;color:var(--accent)}
-.end .stat{font-size:1.05rem;color:var(--muted)}
-.end .btns{display:flex;flex-direction:column;gap:10px;width:100%}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+:root{--bg:#fdf8f0;--card:#ffffff;--ink:#2b2b3a;--soft:#7a7a8c;--line:#ece4d6;--ok:#2fb36d;--no:#f0a04b;
+--a:#ffd6e0;--b:#d4ecff;--c:#dff5d8;--d:#fff0c2;--e:#eadcff;}
+@media (prefers-color-scheme:dark){:root{--bg:#1d1d27;--card:#2a2a38;--ink:#f3f1ea;--soft:#a9a9bb;--line:#3a3a4c;
+--a:#6b3a4a;--b:#2f4a66;--c:#35553a;--d:#5e5230;--e:#4a3d66;}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:20px;line-height:1.6}
+.wrap{max-width:680px;margin:0 auto;padding:16px 16px 90px}
+h1{font-size:28px;margin:8px 0 4px;text-align:center}
+.sub{text-align:center;color:var(--soft);font-size:16px;margin-bottom:18px}
+.stars{position:fixed;top:10px;right:12px;background:var(--card);border:2px solid var(--line);border-radius:30px;padding:4px 14px;font-weight:700;z-index:5}
+.map{display:grid;gap:14px}
+.lv{display:flex;align-items:center;gap:14px;background:var(--card);border:3px solid var(--line);border-radius:22px;padding:16px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:transform .15s}
+.lv:active{transform:scale(.97)}
+.lv .em{font-size:40px}
+.lv .nm{font-weight:800;font-size:21px}
+.lv .ds{font-size:15px;color:var(--soft)}
+.lv .ck{margin-left:auto;font-size:28px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.back{border:none;background:var(--card);border:2px solid var(--line);border-radius:14px;font-size:18px;padding:6px 12px;color:var(--ink);cursor:pointer}
+.bar{flex:1;height:16px;background:var(--line);border-radius:10px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#ff9ab5,#ffcf5c,#6fd38f);border-radius:10px;transition:width .4s}
+.box{background:var(--card);border-radius:26px;padding:22px 20px;border:3px solid var(--line);animation:pop .35s ease}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.tag{display:inline-block;font-size:15px;padding:2px 12px;border-radius:20px;background:var(--d);margin-bottom:8px}
+.ttl{font-size:25px;font-weight:800;margin:4px 0 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 16px}
+.chip{padding:8px 14px;border-radius:16px;font-weight:700;font-size:19px;opacity:0;animation:in .4s forwards}
+.chip.ar{background:none;padding:0 2px;font-size:22px}
+.k-a{background:var(--a)}.k-b{background:var(--b)}.k-c{background:var(--c)}.k-d{background:var(--d)}.k-e{background:var(--e)}
+@keyframes in{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.row{width:100%;height:0}
+.tip{background:var(--d);border-radius:18px;padding:12px 16px;margin:10px 0 16px;font-size:19px}
+.ex{border-left:6px solid #ffb3c6;padding:6px 0 6px 14px;margin:12px 0;font-size:20px}
+.zh{color:var(--soft);font-size:17px;margin-top:4px}
+.key{display:inline-block;background:#ffcf5c;color:#3a2a00;border-radius:10px;padding:0 10px;cursor:pointer;font-weight:800;animation:wig 1.6s infinite}
+.key.open{animation:none;background:#c9f2d6;color:#123a20}
+@keyframes wig{0%,100%{transform:rotate(0)}50%{transform:rotate(-3deg) scale(1.05)}}
+.say{border:none;background:var(--b);border-radius:50%;width:42px;height:42px;font-size:20px;cursor:pointer;vertical-align:middle;margin-left:6px}
+.btn{display:block;width:100%;margin-top:18px;border:none;border-radius:20px;padding:16px;font-size:21px;font-weight:800;background:#ff8fab;color:#fff;cursor:pointer;font-family:inherit}
+.btn:active{transform:scale(.98)}
+.q{font-size:21px;font-weight:700;margin:6px 0}
+.blank{display:inline-block;min-width:70px;border-bottom:3px dashed #ff8fab;text-align:center;color:#e0567a}
+.opts{display:grid;gap:12px;margin-top:16px}
+.opt{border:3px solid var(--line);background:var(--card);border-radius:18px;padding:14px;font-size:20px;text-align:left;cursor:pointer;color:var(--ink);font-family:inherit}
+.opt.ok{border-color:var(--ok);background:#d9f7e5;color:#123a20}
+.opt.no{border-color:var(--no);opacity:.45;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.why{margin-top:14px;background:#e9f9ef;color:#123a20;border-radius:18px;padding:12px 16px;font-size:18px;animation:pop .3s}
+.cheer{text-align:center;font-size:24px;font-weight:800;margin-top:10px;min-height:34px}
+.again{font-size:14px;background:var(--e);border-radius:12px;padding:2px 10px;margin-left:6px}
+.big{font-size:70px;text-align:center;animation:bounce 1s infinite}
+@keyframes bounce{50%{transform:translateY(-12px)}}
+.fx{position:fixed;top:-40px;font-size:30px;pointer-events:none;animation:fall 1.6s linear forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 </style>
 </head>
 <body>
-
+<div class="stars" id="stars">⭐ 0</div>
 <div class="wrap" id="app"></div>
-
 <script>
-const LEVELS = [
-{ id:"zi", name:"錯字雷區", desc:"錯別字、字音，一字之差就扣分", qs:[
- {s:"飛魚季",q:"哪一個用字<b>完全正確</b>？",o:["疲備不堪","一椿心事","遵尋規則","裝傻發楞"],a:3,w:"正確寫法：疲**憊**、一**樁**、遵**循**。「憊」是累，「備」是準備。"},
- {s:"出師表",q:"「親自耕田」的那個字是？　＿耕南陽",o:["恭","躬","弓","供"],a:1,w:"**躬**＝親身、親自。"},
- {s:"出師表",q:"自己惹的禍：＿由自取",o:["疚","咎","究","救"],a:1,w:"**咎**＝過錯。「疚」是心裡不安（內疚）。"},
- {s:"出師表",q:"偏袒＿私",o:["循","徇","殉","洵"],a:1,w:"**徇**＝順從、偏向。「循」是遵守（遵循）。"},
- {s:"勞山道士",q:"背著書箱出外求學：負＿",o:["籍","笈","急","級"],a:1,w:"**笈**＝書箱，所以是竹字頭。"},
- {s:"勞山道士",q:"才華＿溢",o:["揚","洋","漾","陽"],a:1,w:"像水滿出來，所以是三點水的**洋**。"},
- {s:"出師表",q:"哪一組讀音<b>完全相同</b>？",o:["菲薄／心扉","殊榮／雙姝","詔書／昭告","崩殂／刀俎"],a:1,w:"殊、姝都念ㄕㄨ。詔ㄓㄠˋ、昭ㄓㄠ **聲調不同**也算不同。",t:"完全相同＝連聲調也要一樣"}
+// ===== 內容：一張卡一個重點；[[ ]] 是點了才出現的關鍵字 =====
+const LEVELS=[
+{name:"it 替身",em:"🧩",ds:"虛受詞 it、seem 的兩種寫法",items:[
+ {t:"card",tag:"L1・Review 1",title:"it 先幫忙佔位子",chips:[["S + find / think / consider","a"],["it","e"],["adj. / N","b"],["(for sb.)","d"],["to V","c"]],
+  tip:"🔑 it 是替身，真正的主角（to V）在最後面才出場。",ex:"Some people [[find it challenging to]] master English.",zh:"有些人覺得要精通英文很有挑戰性。"},
+ {t:"quiz",q:"I still find it difficult ___ along a curb.",zh:"我還是覺得沿著路邊停車很難。",o:["to park","parking","that park","with parking"],a:0,why:"find it + adj. + to V，主角要用 to V。"},
+ {t:"quiz",q:"Emma considers ___ a blessing to have Midnight by her bedside.",zh:"Emma 覺得有 Midnight 陪在床邊是一種福氣。",o:["it","them","so","what"],a:0,why:"it 先佔位子，代替後面的 to have Midnight…。"},
+ {t:"card",tag:"L1 句型",title:"seem：看起來…",chips:[["It seems that + 現在式","b"],["→","ar"],["S seems to V","c"],["row",""],["It seems that + 過去／完成","a"],["→","ar"],["S seems to have p.p.","e"]],
+  tip:"🔑 事情比「看起來」還早發生 → 用 to have p.p.",ex:"It seems that he lost his key. = He [[seems to have lost]] his key.",zh:"他似乎把鑰匙弄丟了。"},
+ {t:"quiz",q:"It seems that he was brought up abroad. = He seems ___ abroad.",zh:"他似乎是在國外長大的。",o:["to have been brought up","to be brought up","to bring up","bringing up"],a:0,why:"was brought up 比 seems 早，而且是被動 → to have been p.p.。"},
+ {t:"quiz",q:"It seemed that Ken had lost the courage. = Ken ___ the courage.",zh:"Ken 當時似乎已經失去了勇氣。",o:["seemed to have lost","seems to lose","seemed to lose","seems to have lost"],a:0,why:"seemed 是過去，had lost 更早 → seemed to have p.p.。"}
 ]},
-{ id:"yi", name:"文言小字", desc:"一字多義、通同字、虛字語氣", qs:[
- {s:"出師表",q:"「<mark>庶</mark>竭駑鈍」的「庶」是？",o:["希望","大概","眾多","感嘆"],a:0,w:"**庶＝希望**（期望語氣）。殆、其＝大概（推測語氣）。"},
- {s:"勞山道士",q:"「未果，<mark>尋</mark>病終」的「尋」是？",o:["尋找","不久","經常","平常"],a:1,w:"**尋＝不久**。同一家的還有：俄頃、移時、已而、既而。"},
- {s:"勞山道士",q:"「<mark>數</mark>為余言」的「數」是？",o:["計算","屢次","幾個","不久"],a:1,w:"數（ㄕㄨㄛˋ）＝**屢次**，是頻率，不是時間。"},
- {s:"勞山道士",q:"「不<mark>勝</mark>酒力」的「勝」是？",o:["勝利","美好","承受得住","超過"],a:2,w:"不勝＝**承受不了**。「良宵勝樂」的勝才是美好，兩個不一樣。"},
- {s:"勞山道士",q:"「日<mark>薄</mark>西山」的「薄」是？",o:["輕薄","迫近","微小","看輕"],a:1,w:"**薄＝迫近**，太陽快要碰到西山。「薄暮」也是這個意思。"},
- {s:"出師表",q:"「三<mark>顧</mark>臣於草廬之中」的「顧」是？",o:["回頭看","拜訪","照顧","顧慮"],a:1,w:"三顧＝**拜訪**三次。「顧視」才是看。"},
- {s:"出師表",q:"「臣敢竭＿＿之力」，比喻輔佐君王的人",o:["肘腋","股肱","臟腑","髀肉"],a:1,w:"**股肱**＝大腿和手臂，君王的左右手。"},
- {s:"出師表",q:"哪一個是<b>偏義複詞</b>（只取一個字的意思）？",o:["崩殂","損益","異同","優劣"],a:2,w:"**異同**只取「異」。崩殂兩字同義；損益、優劣兩個字都有意思。"},
- {s:"勞山道士",q:"通同字：鬚眉畢「見」，「見」通？",o:["看","現","建","間"],a:1,w:"見通**現**，顯現。"},
- {s:"勞山道士",q:"通同字：「俛」首驟入，「俛」通？",o:["免","俯","勉","晚"],a:1,w:"俛通**俯**，低頭。"},
- {s:"勞山道士",q:"通同字：竊「忻」慕，「忻」通？",o:["新","欣","心","興"],a:1,w:"忻通**欣**，欣喜。"}
+{name:"時間魔法",em:"⏰",ds:"by the time、not…until",items:[
+ {t:"card",tag:"L3",title:"by the time：到了…的時候",chips:[["By the time + 過去式","b"],["→","ar"],["had p.p.","a"],["row",""],["By the time + 現在式","b"],["→","ar"],["will have p.p.","c"]],
+  tip:"🔑 時間點用「簡單式」，動作用「完成式」。",ex:"By the time I reached the beach, the sun [[had already set]].",zh:"等我到海灘時，太陽已經下山了。"},
+ {t:"quiz",q:"By the time you finish your homework, ___.",zh:"等你寫完功課，天就會黑了。",o:["it will have turned dark","it is dark","it had turned dark","it has turned dark"],a:0,why:"finish 是現在式（代表未來）→ will have p.p.。"},
+ {t:"quiz",q:"In 1930 we laughed 19 minutes a day, but by 1980 it ___ to six minutes.",zh:"到了 1980 年，已經減少到六分鐘。",o:["had decreased","has been decreasing","was decreasing","should have decreased"],a:0,why:"by + 過去時間（1980）→ had p.p.。"},
+ {t:"quiz",q:"By the time Pandora realized something was wrong, she ___ all the troubles.",zh:"等潘朵拉發現不對勁，她早就把災難都放出來了。",o:["had released","has released","would release","released"],a:0,why:"realized 是過去，放出來更早 → had p.p.。"},
+ {t:"card",tag:"L2",title:"not…until：直到…才「開始」",chips:[["not + 動作","a"],["until + 時間點","b"],["→","ar"],["那時才開始","c"]],
+  tip:"🔑 until 後面是動作的「起點」。放句首要倒裝！",ex:"[[Not until]] you reminded me [[did I realize]] my mistake.",zh:"直到你提醒我，我才發現自己的錯。"},
+ {t:"quiz",q:"Not until you reminded me ___ my mistake.",zh:"直到你提醒我，我才發現錯誤。",o:["did I realize","I realized","I did realize","realized I"],a:0,why:"Not until 放句首 → 後面要倒裝：did + I + 原形。"},
+ {t:"quiz",q:"The profit didn't tremendously increase ___ the team adopted an innovative approach.",zh:"直到團隊採用創新方法，利潤才大幅增加。",o:["until","since","by the time","while"],a:0,why:"not…until 直到…才開始。"}
 ]},
-{ id:"cy", name:"成語・歇後語", desc:"海的成語、魚的俗語、孔明歇後語", qs:[
- {s:"飛魚季",q:"形容「虛幻不實」的是？",o:["東海揚塵","海市蜃樓","河清海晏","海屋添籌"],a:1,w:"**海市蜃樓**＝虛幻。"},
- {s:"飛魚季",q:"「東海揚塵」的意思是？",o:["不自量力","世事變化極大","水很清澈","祝人長壽"],a:1,w:"東海變成陸地揚起塵土＝**世事變化極大**。",t:"別看字面猜意思"},
- {s:"飛魚季",q:"「河清海晏」的意思是？",o:["水清見底","天下太平","海浪平靜","河水氾濫"],a:1,w:"**天下太平**。不是在說水很清。",t:"別看字面猜意思"},
- {s:"飛魚季",q:"「一去不復返」的成語是？",o:["泥牛入海","海屋添籌","海市蜃樓","東海揚塵"],a:0,w:"泥做的牛掉進海裡就融化了＝**一去不回**。"},
- {s:"勞山道士",q:"「吮癰舐痔」比喻什麼？",o:["孝順父母","諂媚巴結","醫術高明","刻苦耐勞"],a:1,w:"**諂媚巴結**的無恥行為，不能拿來稱讚孝子。"},
- {s:"勞山道士",q:"「擲地有聲」形容什麼？",o:["說話很大聲","文辭優美、音韻鏗鏘","東西很重","態度堅決"],a:1,w:"用來稱讚**文章寫得好**。"},
- {s:"飛魚季",q:"沒恆心，成不了氣候：",o:["放長線釣大魚","三天打魚，兩天曬網","魚幫水，水幫魚","大魚吃小魚"],a:1,w:"**三天打魚，兩天曬網**。"},
- {s:"飛魚季",q:"一個主內一個主外，互相幫忙：",o:["魚幫水，水幫魚","手插魚籃，避不得腥","放長線釣大魚","大魚吃小魚"],a:0,w:"**魚幫水，水幫魚**＝相輔相成。"},
- {s:"出師表",q:"劉備見孔明——",o:["懷才不遇","如魚得水","五體投地","計上心頭"],a:1,w:"劉備說「吾得孔明，**如魚得水**」。"},
- {s:"出師表",q:"諸葛亮做丞相——",o:["鞠躬盡瘁","智勇雙全","執法如山","滿載而歸"],a:0,w:"**鞠躬盡瘁**，死而後已。"},
- {s:"出師表",q:"孔明借箭——",o:["糊里糊塗","滿載而歸","化險為夷","懷才不遇"],a:1,w:"草船借箭，箭插滿船＝**滿載而歸**。"},
- {s:"出師表",q:"諸葛亮住茅廬——",o:["計上心頭","懷才不遇","鞠躬盡瘁","如魚得水"],a:1,w:"還沒被請出山，有才卻沒地方用＝**懷才不遇**。"},
- {s:"出師表",q:"「先帝三顧臣於草廬……由是感激，遂許先帝以驅馳」最接近？",o:["龍無雲而不行","士為知己者死","良禽擇木而棲","有志者事竟成"],a:1,w:"被賞識 → 願意效命＝**士為知己者死**。「良禽擇木」是自己主動挑老闆，不對。"}
+{name:"左右對稱",em:"⚖️",ds:"that / those、not only…but also、other",items:[
+ {t:"card",tag:"L2",title:"that / those：不重複說",chips:[["單數 N","b"],["→","ar"],["that","a"],["row",""],["複數 N","b"],["→","ar"],["those","c"]],
+  tip:"🔑 前面說過的名詞，再出現時換成 that / those。",ex:"The skills needed to manage a team are different from [[those]] needed to sell products.",zh:"管理團隊需要的技能，和賣產品需要的不同。"},
+ {t:"quiz",q:"Schools in the north are better equipped, while ___ in the south are relatively poor.",zh:"北部的學校設備較好，南部的則相對較差。",o:["those","they","ones","what"],a:0,why:"代替複數 schools → those。"},
+ {t:"quiz",q:"Their scores were almost as high as ___ of the regular students.",zh:"他們的分數幾乎和普通班一樣高。",o:["those","that","the one","it"],a:0,why:"scores 是複數，後面有 of → those。"},
+ {t:"card",tag:"L3",title:"not only A but also B",chips:[["A、B 長一樣","c"],["動詞看 B","a"],["Not only 放句首 → 倒裝","e"]],
+  tip:"🔑 動詞跟著「後面那個」走。",ex:"[[Not only had I]] let her down, [[but I had also]] broken her heart.",zh:"我不僅讓她失望，還傷了她的心。"},
+ {t:"quiz",q:"Not only the Ministry of Education but also the Ministry of Labor ___ responsible.",zh:"不只教育部，勞動部也有責任。",o:["is","are","be","being"],a:0,why:"動詞看 B（the Ministry of Labor 單數）→ is。"},
+ {t:"quiz",q:"Both the Ministry of Education and the Ministry of Labor ___ responsible.",zh:"教育部和勞動部都有責任。",o:["are","is","be","was"],a:0,why:"both A and B 一定是複數 → are。"},
+ {t:"quiz",q:"Not only children but also almost every adult ___ over-reliant on electronic devices.",zh:"不只孩童，幾乎每個大人都過度依賴電子產品。",o:["is","are","were","be"],a:0,why:"看 B：every adult 是單數 → is。"},
+ {t:"quiz",q:"I can't find my ___ shoe.",zh:"我找不到我的另一隻鞋。",o:["other","another","others","the others"],a:0,why:"一雙只有兩隻，剩下那隻 = the other；前面有 my 就不加 the。"}
 ]},
-{ id:"kw", name:"課文重點", desc:"三課最常考的理解題", qs:[
- {s:"飛魚季",q:"祈禱詞「使<mark>我們</mark>永遠結合在一起」，「我們」是？",o:["只有飛魚","飛魚和達悟族人","只有族人","飛魚神"],a:1,w:"**魚＋人**一起，所以是「族人與自然同生共存」。",t:"選項只對一半＝錯"},
- {s:"飛魚季",q:"作者說的「被漢化」，重點是？",o:["只知道讀書","不會捕魚，部落文化斷掉","改用漢人名字","搬去臺北住"],a:1,w:"作者去捕魚就是為了洗掉漢化的惡名 → 核心是**部落文化斷裂**。"},
- {s:"飛魚季",q:"作者被鄰居當成「次等男人」，因為？",o:["手無縛雞之力","不會潛水射魚，沒繼承傳統技能","只會讀書","家裡沒有船"],a:1,w:"作者自己說「**肺活量很好**」，所以「手無縛雞之力」跟原文矛盾。",t:"選項和原文矛盾"},
- {s:"飛魚季",q:"「深藍的鰭背、淺黃的腹部」寫的是？",o:["飛魚","鬼頭刀","鯨豚","鯊魚"],a:1,w:"是**鬼頭刀**，不是飛魚。讀的時候要分清楚在寫誰。"},
- {s:"飛魚季",q:"「機關槍掃射的中彈聲」是？",o:["真的有人開槍","譬喻飛魚撞船的聲音","漁船的引擎聲","颱風的聲音"],a:1,w:"這是**譬喻**。",t:"別把譬喻當事實"},
- {s:"出師表",q:"「<mark>誠宜</mark>開張聖聽」是父子語（叮嚀後主），關鍵字是？",o:["宜","臣","先帝","陛下"],a:0,w:"看到**宜／不宜／不可**＝像爸爸在叮嚀。"},
- {s:"出師表",q:"劉備臨終託孤，對應〈出師表〉哪一句？",o:["臨崩寄臣以大事","三顧臣於草廬之中","追先帝之殊遇","庶竭駑鈍"],a:0,w:"臨崩＝**快要死的時候**，寄臣以大事＝託付。"},
- {s:"出師表",q:"諸葛亮的一生，哪個順序對？",o:["隆中對 → 三顧茅廬 → 六出祁山 → 七擒孟獲","三顧茅廬 → 隆中對 → 七擒孟獲 → 六出祁山","三顧茅廬 → 七擒孟獲 → 隆中對 → 六出祁山","七擒孟獲 → 三顧茅廬 → 隆中對 → 六出祁山"],a:1,w:"劉備先來拜訪，才有隆中對；**先平定南方（七擒），再北伐（六出祁山）**。"},
- {s:"出師表",q:"「映階碧草<mark>自</mark>春色，隔葉黃鸝<mark>空</mark>好音」哪二字透露落寞？",o:["自、空","碧、黃","春、好","映、隔"],a:0,w:"自＝獨自、空＝白白地：再美也沒人欣賞。",t:"問「字」就寫字，別抄整句"},
- {s:"勞山道士",q:"道士說「歸宜潔持，否則不驗」，意思是？",o:["回家要洗乾淨","保持心念純潔，不虛榮、不拿法術謀利","每天都要練習","不能告訴家人"],a:1,w:"潔持＝**心念純潔**。"},
- {s:"勞山道士",q:"王生哪個行為違反了「潔持」？",o:["回家就自誇遇到仙人","上山砍柴","向道士告辭","看道士喝酒"],a:0,w:"**一回家就自誇** → 虛榮，所以法術失靈、撞牆。"},
- {s:"勞山道士",q:"「一道士坐蒲團上，素髮垂領」是誰的眼睛看到的？",o:["王生","道士","作者","異史氏"],a:0,w:"王生上山**第一眼**看到道士。寫某人外貌，常是另一個角色在看他。"},
- {s:"勞山道士",q:"道士傳授的「道」，本質是？",o:["法術高強","單純質樸，不執著功利和欲念","隱居山林","長生不老"],a:1,w:"**單純質樸＋不執著**，兩個都要寫到才滿分。"},
- {s:"勞山道士",q:"延伸閱讀〈種梨〉在諷刺誰？",o:["道士","吝嗇的賣梨人（為富不仁）","看熱鬧的人","出錢的店員"],a:1,w:"店員慷慨是拿來**對比**賣梨人的小氣。"}
+{name:"分詞變身",em:"🏃",ds:"分詞構句、分詞片語、形容詞或副詞",items:[
+ {t:"card",tag:"L3",title:"分詞構句：句子變短",chips:[["主動","b"],["→","ar"],["V-ing","c"],["row",""],["被動","b"],["→","ar"],["p.p.","a"],["row",""],["先做完","b"],["→","ar"],["Having p.p.","e"],["row",""],["主詞不同","b"],["→","ar"],["主詞留著","d"]],
+  tip:"🔑 先問：主詞是「自己做」還是「被…」？",ex:"[[Realizing]] that she was frightened, John said quickly, “I'm here to help.”",zh:"John 發現她嚇到了，趕緊說：「我是來幫忙的。」"},
+ {t:"quiz",q:"___ with the service, Samuel decided to write a letter of compliments.",zh:"對服務很滿意，Samuel 決定寫一封感謝信。",o:["Pleased","Please","Pleasing","To please"],a:0,why:"Samuel 是「被取悅」→ 被動 p.p.。"},
+ {t:"quiz",q:"___ from the back or from the side, the palace was perfectly designed.",zh:"不論從後面或側面看，宮殿都設計得很完美。",o:["Observed","Observe","Observing","To observe"],a:0,why:"宮殿是「被看」→ 被動 p.p.。"},
+ {t:"quiz",q:"Which sentence is WRONG?",zh:"找出錯誤的句子。",o:["Although being unemployed, life must go on.","Jay wrote Patty a letter, thanking her.","Having completed the book, the writer took a month off.","It was because of her encouragement that I went abroad."],a:0,why:"失業的是「我」，不是 life，主詞不同不能省 → Although I am unemployed。"},
+ {t:"card",tag:"Review 1",title:"分詞片語：形容名詞",chips:[["N","d"],["+ V-ing","c"],["（主動）","b"],["row",""],["N","d"],["+ p.p.","a"],["（被動）","b"]],
+  tip:"🔑 把 which is / that are 拿掉就變身完成。",ex:"One was a pile of beef [[hidden]] inside a bull's stomach.",zh:"一堆是藏在牛胃裡的牛肉。"},
+ {t:"quiz",q:"A project ___ on 3D printing has been launched.",zh:"一個依靠 3D 列印的計畫已經啟動。",o:["relying","relied","rely","to be relied"],a:0,why:"計畫「依靠」是主動 → V-ing。"},
+ {t:"quiz",q:"When she opened the box ___ all manner of misery, evils flew out.",zh:"當她打開裝滿各種苦難的盒子…",o:["containing","contain","contained","to contain"],a:0,why:"盒子「裝著」是主動 → which contained → containing。"},
+ {t:"card",tag:"L3",title:"形容詞 or 副詞？",chips:[["補上 Being 通順","b"],["→","ar"],["形容詞","a"],["row",""],["描述動作／整句","b"],["→","ar"],["副詞 -ly","c"]],
+  tip:"🔑 在說「誰的心情」用形容詞；在說「怎麼做」用副詞。",ex:"[[Angry]] about being tricked, Zeus took fire away.",zh:"宙斯因為被騙而生氣，把火拿走了。"},
+ {t:"quiz",q:"___, Victor told his story after having a cup of tea.",zh:"喝完茶後，Victor 慢慢地說出他的故事。",o:["Slowly","Slow"],a:0,why:"在說「怎麼說」→ 副詞。"},
+ {t:"quiz",q:"Not ___, new mothers often suffer from depression.",zh:"不出所料，新手媽媽常有憂鬱症。",o:["surprisingly","surprising"],a:0,why:"修飾整個句子 → 副詞。"}
 ]},
-{ id:"cs", name:"文學常識", desc:"作家、書名、四庫、對聯", qs:[
- {s:"飛魚季",q:"「討海人、鯨豚、海洋生態」是哪位作家？",o:["夏曼·藍波安","廖鴻基","琦君","張曉風"],a:1,w:"**廖鴻基**＝討海人＋鯨豚。"},
- {s:"飛魚季",q:"「達悟族、神話、反漢化」是哪位作家？",o:["廖鴻基","夏曼·藍波安","琦君","吳晟"],a:1,w:"**夏曼·藍波安**＝達悟族、部落文化。"},
- {s:"出師表",q:"陳壽的《三國志》是？",o:["小說","史書","詩集","筆記小說"],a:1,w:"《三國志》是**史書**；小說是羅貫中的《三國演義》。"},
- {s:"出師表",q:"韓愈〈師說〉是哪個朝代？",o:["漢","魏晉","唐","宋"],a:2,w:"**唐代**，不在「兩漢三國魏晉」範圍。"},
- {s:"勞山道士",q:"「滿紙荒唐言，一把辛酸淚」是？",o:["紅樓夢","聊齋誌異","儒林外史","三國演義"],a:0,w:"**《紅樓夢》**第一回。"},
- {s:"勞山道士",q:"「功名富貴無憑據」是哪本書的主題？",o:["紅樓夢","西遊記","儒林外史","三國演義"],a:2,w:"**《儒林外史》**諷刺追求功名的讀書人。"},
- {s:"勞山道士",q:"「妄續《幽冥》之錄，僅成《孤憤》之書」是？",o:["西遊記","聊齋誌異","老殘遊記","紅樓夢"],a:1,w:"蒲松齡寫**《聊齋誌異》**的心情（聊齋自誌）。"},
- {s:"勞山道士",q:"《道德經》在四庫分類屬於？",o:["經","史","子","集"],a:2,w:"《道德經》就是《老子》，屬**子部**。《山海經》也是子部。"},
- {s:"勞山道士",q:"哪一本<b>沒有</b>被收進《四庫全書》？",o:["史記","論語","聊齋誌異","樂府詩集"],a:2,w:"**聊齋誌異**、紅樓夢都沒收（通俗、章回小說不收）。",t:"看清楚題目問「沒有」"},
- {s:"勞山道士",q:"對聯「仄起平收」，<b>上聯</b>最後一字是？",o:["仄聲（三、四聲）","平聲（一、二聲）","都可以","一定是名詞"],a:0,w:"上聯結尾**仄聲**、下聯結尾**平聲**。"},
- {s:"出師表",q:"「自謂羲皇上人」「五柳」說的是誰？",o:["諸葛亮","陶淵明","杜甫","歐陽脩"],a:1,w:"**陶淵明**的關鍵字：五柳、羲皇上人、歸去來、漉酒巾。"},
- {s:"出師表",q:"「東風不與周郎便」寫的是誰？",o:["諸葛亮","周瑜","劉備","曹操"],a:1,w:"周郎＝**周瑜**（杜牧〈赤壁〉）。"}
+{name:"小句型寶箱",em:"🔧",ds:"out-、of+N、have no choice、end up、dress",items:[
+ {t:"card",tag:"L2",title:"out- 開頭 = 勝過",chips:[["outlive","c"],["outshine","c"],["outsell","c"],["outnumber","c"],["row",""],["⚠ outsource 外包","a"],["⚠ outsider 局外人","a"]],
+  tip:"🔑 「比…更 ~」可以改成 out + 動詞。",ex:"Women live longer than men. = Women [[outlive]] men.",zh:"女性比男性長壽。"},
+ {t:"quiz",q:"我們寡不敵眾。= We were ___.",zh:"人數被對方勝過",o:["outnumbered","outsourced","outgrown","outsiders"],a:0,why:"人數被勝過 → be outnumbered。"},
+ {t:"card",tag:"L2",title:"of / with + 名詞",chips:[["of + N","b"],["=","ar"],["形容詞","a"],["row",""],["with + N","b"],["=","ar"],["副詞","c"]],
+  tip:"🔑 of great significance = very significant；with ease = easily",ex:"Liam can buy a house [[with relative ease]].",zh:"Liam 可以相當輕鬆地買房子。"},
+ {t:"quiz",q:"This discovery is ___ great importance.",zh:"這個發現非常重要。",o:["of","with","in","for"],a:0,why:"of + N = adj. → of great importance = very important。"},
+ {t:"card",tag:"L1",title:"沒辦法，只好…",chips:[["have no choice","a"],["but","d"],["to V","c"]],
+  tip:"🔑 but 在這裡是「除了」，後面接 to V。",ex:"I [[had no choice but to]] give up this opportunity.",zh:"我不得已只好放棄這次機會。"},
+ {t:"quiz",q:"The politician had no choice but ___ what he had done.",zh:"那位政治人物別無選擇，只能承認。",o:["to admit","admitting","admitted","admit to"],a:0,why:"have no choice but + to V。"},
+ {t:"card",tag:"L3",title:"end up：最後變成…",chips:[["end up with","c"],["＋東西／結果","d"],["row",""],["end up as","b"],["＋身分","d"],["row",""],["end up like","a"],["＋某人","d"]],
+  tip:"🔑 想像故事的「結局」。",ex:"Instead, he ended up [[with]] nothing but bones.",zh:"結果他最後只拿到骨頭。"},
+ {t:"quiz",q:"I don't want to end up ___ my parents, fighting over trifles every day.",zh:"我不想最後變得跟爸媽一樣，每天為小事吵架。",o:["like","with","as","to"],a:0,why:"變得跟某人一樣 → end up like。"},
+ {t:"card",tag:"L1",title:"穿著打扮",chips:[["dress sb in","b"],["替人穿"],["row",""],["be dressed in","c"],["穿著"],["row",""],["dress up as","a"],["打扮成"]],
+  tip:"🔑 in 後面接衣服或顏色，as 後面接角色。",ex:"I would [[dress up as]] Ronald McDonald.",zh:"我會打扮成麥當勞叔叔。"},
+ {t:"quiz",q:"At the costume party, she ___ as a princess.",zh:"在化裝舞會上，她打扮成公主。",o:["dressed up","was dressed in","dressed in","wore"],a:0,why:"打扮成某角色 → dress up as。"},
+ {t:"quiz",q:"His little brother would have no one to play ___.",zh:"他弟弟就沒有人可以一起玩了。",o:["with","to","for","（不用填）"],a:0,why:"play with no one → 介系詞 with 不能掉！"}
 ]},
-{ id:"trap", name:"陷阱偵探", desc:"這次考卷最常掉進去的坑", qs:[
- {s:"全範圍",q:"選項：「祈禱是為了讓<b>飛魚物種</b>長存」。哪裡有問題？",o:["只對一半","原文沒有","主詞換人","沒問題"],a:0,w:"原文是魚**和**人，選項只講魚。",t:"只對一半＝錯"},
- {s:"全範圍",q:"選項：「海風讓作者感受到<b>祖靈的開示</b>」，原文找不到。這是？",o:["無中生有／過度引申","只對一半","全稱字眼","正確"],a:0,w:"原文**找不到證據**的，就不要勾。",t:"無中生有"},
- {s:"全範圍",q:"選項出現「<b>不論</b>廣義或狹義<b>皆</b>……」要小心什麼？",o:["範圍講太大","語氣太客氣","字太多","沒什麼"],a:0,w:"不論、皆、都、全部 → 常常**把範圍講太大**。",t:"全稱字眼"},
- {s:"全範圍",q:"選項：「暗示<b>道士</b>缺少自知之明」。哪裡錯？",o:["主詞被換掉，應該是王生","道士本來就笨","時間錯","沒錯"],a:0,w:"選項常偷換**主角**，主詞要對回原文。",t:"主詞換人"},
- {s:"全範圍",q:"原文「琰<b>疑</b>其妻」，選項說「有明確證據」。這是？",o:["一字之差的陷阱","正確","全稱字眼","只對一半"],a:0,w:"**疑＝懷疑**，不是確定。",t:"一字之差"},
- {s:"全範圍",q:"題目問「哪<b>二個字</b>」，答案要寫？",o:["兩個字","整句","一段解釋","一個字"],a:0,w:"先**圈出作答單位**：字、詞、句。"},
- {s:"全範圍",q:"題目問「下列<b>不屬於</b>……的是」，第一步？",o:["把「不」圈起來","直接選最熟的","選第一個","跳過"],a:0,w:"題目問「**不**是」，最容易看反。"},
- {s:"全範圍",q:"題目有給規則（例如：點數相加是 3 的倍數），先做什麼？",o:["用規則先刪選項","先看人物","直接猜","跳過規則"],a:0,w:"第 21 題光算加法就能**刪掉兩個**。"},
- {s:"全範圍",q:"多選題，某個選項不確定，怎麼辦？",o:["跳過不勾","回原文找證據再決定","全部都勾","隨便勾"],a:1,w:"**漏選**和多選一樣扣分，每個都要判斷。"},
- {s:"全範圍",q:"寫考卷寫到第 25 題左右，要做什麼？",o:["看時間，至少留 15 分鐘給非選擇題","繼續慢慢寫","先寫作文","檢查第 1 題"],a:0,w:"三張卷子的非選擇題都空白，每次掉 **30 分**左右。"}
-]},
-{ id:"write", name:"寫寫看", flash:true, desc:"非選擇題：先在心裡答，再翻答案", qs:[
- {s:"飛魚季",q:"作者為什麼那麼在意「船」？（3 分）",a:"作者必須靠捕魚證明自己是達悟族的勇士、提升社會地位，而**船是達成目標的工具**。",k:["捕魚證明自己","提升社會地位","船＝工具"]},
- {s:"飛魚季",q:"「出海打漁的男人，漁獲是他們＿＿＿＿」",a:"**無價的勳章**",k:["回原文找句子"]},
- {s:"出師表",q:"為什麼選〈出師表〉來看「政治局勢」？（4 分）",a:"文中可見當時**三國鼎立**、蜀漢財力人力困乏、諸葛亮已**平定南方**，準備**北伐曹魏**。",k:["扣緊「政治局勢」","三國鼎立","平定南方","北伐"]},
- {s:"出師表",q:"〈蜀相〉「映階碧草自春色，隔葉黃鸝空好音」寫出什麼心情？",a:"春景再美、鳥聲再好也**沒人欣賞**的冷清，感嘆諸葛亮**功業未成就先離世**。",k:["景美無人賞","壯志未酬"]},
- {s:"勞山道士",q:"道士傳授的「道」本質是什麼？（勿抄原文，4 分）",a:"一個**單純質樸**，**沒有執著於功利、世俗欲念**的生命狀態。",k:["單純質樸","不執著功利","不執著欲念"]},
- {s:"勞山道士",q:"「歸宜潔持，否則不驗」的涵義？（3 分）",a:"要王生**保持心念純潔**，不要有**虛榮**的想法，也不要用法術**謀取利益**。",k:["心念純潔","不虛榮","不謀利"]},
- {s:"勞山道士",q:"從什麼行為看出王生沒遵守要求？（4 分）",a:"王生**一回家就自誇遇到仙人**，可見他**膚淺虛榮**，沒有做到「潔持」。",k:["寫出行為","再說明虛榮","兩層都要寫"]},
- {s:"勞山道士",q:"〈種梨〉道士有哪兩種能力？（4 分）",a:"**隔空取物**（把鄉人的梨和車把變走）、施展**眩惑人的法術**（變出一棵梨樹）。",k:["隔空取物","幻術","兩項都要寫"]}
+{name:"單字片語衝刺",em:"🌟",ds:"段考常考搭配",items:[
+ {t:"card",tag:"L1",title:"L1 搭配詞",chips:[["suffer from 罹患","a"],["be confined to 離不開","b"],["burst into laughter 哄堂大笑","c"],["in fright 嚇得","d"],["pass away 過世","e"],["turn…down 拒絕","a"]],
+  tip:"🔑 每個積木都可以點下面的 🔊 聽一次。",ex:"He [[was confined to]] a wheelchair for months.",zh:"他好幾個月都離不開輪椅。"},
+ {t:"quiz",q:"Cats are crucial sources of support for ___ patients in their final stages of life.",zh:"貓是末期病人重要的支持來源。",o:["terminal","corporate","elementary","heartfelt"],a:0,why:"final stages 是線索 → terminal 末期的。"},
+ {t:"quiz",q:"Her presence ___ smiles and conversations.",zh:"她的出現引發了笑容和談話。",o:["prompts","confides","contacts","stretches"],a:0,why:"prompt 促使、引發。"},
+ {t:"quiz",q:"They screamed and ran away in ___.",zh:"他們尖叫著嚇得逃跑。",o:["fright","frighten","frightened","frightening"],a:0,why:"in + 名詞 → in fright。"},
+ {t:"quiz",q:"Shy patients often show ___ in expressing their emotions.",zh:"害羞的病人表達情緒時常常猶豫。",o:["hesitation","texture","empathy","exploration"],a:0,why:"show hesitation 表現出猶豫。"},
+ {t:"card",tag:"L2・L3",title:"L2・L3 搭配詞",chips:[["be capable of 有能力","b"],["rely heavily on 高度依賴","c"],["come into conflict with 起衝突","a"],["benefit from 獲益","d"],["fall victim to 成為受害者","e"],["be furious at 對…生氣","a"]],
+  tip:"🔑 介系詞跟單字是好朋友，要一起背。",ex:"Zeus [[tortured]] Prometheus by having an eagle feed on his liver.",zh:"宙斯讓老鷹啄食普羅米修斯的肝來折磨他。"},
+ {t:"quiz",q:"He ___ Prometheus by tying him to a rock and having an eagle feed on his liver.",zh:"他把普羅米修斯綁在石頭上折磨他。",o:["tortured","banished","mentioned","slaughtered"],a:0,why:"普羅米修斯還活著、一直受苦 → torture 折磨。"},
+ {t:"quiz",q:"Ancient Egypt was one of the most powerful ancient ___.",zh:"古埃及是最強大的古文明之一。",o:["civilizations","civilization","civilize","civil"],a:0,why:"one of the + 複數名詞。"},
+ {t:"quiz",q:"Another ___ suggestion is that organizations should emphasize skill development.",zh:"另一個有建設性的建議是…",o:["constructive","frail","upright","artificial"],a:0,why:"constructive suggestion 有建設性的建議。"},
+ {t:"card",tag:"片語",title:"段考片語（翻譯必考）",chips:[["be about to 正要","a"],["make a difference 有影響","b"],["get down to 開始做","c"],["in charge of 負責","d"],["map out 詳細規劃","e"],["set the stage for 為…鋪路","a"],["run out of 用完","b"],["make up for 彌補","c"],["build on 以…為基礎","d"]],
+  tip:"🔑 這些都是段考翻譯題的答案！",ex:"I believed I could [[build on]] my years of experience.",zh:"我相信我能以多年經驗為基礎。"},
+ {t:"quiz",q:"As I ___ leave the office last night, my boss called me.",zh:"昨晚我正要離開辦公室時…",o:["was about to","was able to","was used to","was likely to"],a:0,why:"be about to 正要、即將。"},
+ {t:"quiz",q:"The government has ___ ways to tackle inflation.",zh:"政府已經用完了對付通膨的辦法。",o:["run out of","made up for","set the stage for","fallen victim to"],a:0,why:"run out of 用完。"},
+ {t:"quiz",q:"The team is ready to ___ executing the tasks.",zh:"團隊準備好開始著手執行任務。",o:["get down to","pass away","turn down","cheer up"],a:0,why:"get down to + V-ing 開始做某事。"},
+ {t:"quiz",q:"Sam asked Ada out, but she ___ him ___.",zh:"Sam 約 Ada，但她拒絕了他。",o:["turned … down","cheered … up","passed … on","figured … out"],a:0,why:"turn sb down 拒絕某人。"}
 ]}
 ];
 
-const $ = s=>document.querySelector(s);
-const app = $("#app");
-const md = s => s.replace(/\*\*(.+?)\*\*/g,"<mark>$1</mark>");
-let done = {};
-try{ done = JSON.parse(localStorage.getItem("gw-done")||"{}") }catch(e){}
-function save(){ try{ localStorage.setItem("gw-done",JSON.stringify(done)) }catch(e){} }
-const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a };
+// ===== 狀態 =====
+const KEY="b3l13_quest";
+let save={stars:0,done:{}};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s)save=s}catch(e){}
+function store(){try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){}}
+let L=null,queue=[],pos=0,combo=0,firstTry=true;
+const app=document.getElementById("app");
+const CHEER=["太強了！🎉","答對！你超棒 ✨","完美！💯","耶～就是這樣！🥳","腦袋好清楚！🧠","連擊中！🔥"];
+const SOFT=["沒關係，再看一次 💪","差一點點！再試試 🌱","慢慢來，你可以的 😊"];
 
-function home(){
-  app.innerHTML = `
-  <div class="hero">
-    <h1>國文段考闖關</h1>
-    <p>一次一題，答錯的等一下會再出現，答對才算過關。</p>
-  </div>
-  <div class="scope"><span>第一課 飛魚季</span><span>第二課 出師表</span><span>第四課 勞山道士</span></div>
-  <div class="levels">${LEVELS.map((l,i)=>`
-    <button class="lv" data-i="${i}">
-      <span class="n">第 ${i+1} 關 · ${l.qs.length} 題</span>
-      <span class="t">${l.name}</span>
-      <span class="d">${l.desc}</span>
-      ${done[l.id]?`<span class="done">✓ 已過關</span>`:""}
-    </button>`).join("")}
-  </div>
-  <div class="tip"><b>建議玩法</b><br>一次只玩一關，大約 5 分鐘。玩完休息一下，再挑下一關。</div>`;
-  app.querySelectorAll(".lv").forEach(b=>b.onclick=()=>start(+b.dataset.i));
-  window.scrollTo(0,0);
-}
+// ===== 音效（不用檔案） =====
+let ac;
+function tone(fs,d=.12){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();let t=ac.currentTime;
+ fs.forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type="triangle";o.frequency.value=f;
+ g.gain.setValueAtTime(.18,t+i*d);g.gain.exponentialRampToValueAtTime(.001,t+i*d+d*1.8);o.connect(g);g.connect(ac.destination);o.start(t+i*d);o.stop(t+i*d+d*2)})}catch(e){}}
+const sOK=()=>tone([660,880,1175]),sNO=()=>tone([330,294],.15),sWIN=()=>tone([523,659,784,1047,1319],.11),sTap=()=>tone([880],.06);
+function speak(txt){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt.replace(/\[\[|\]\]/g,"").replace(/___/g,"blank"));u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+function rain(em){for(let i=0;i<14;i++){const d=document.createElement("div");d.className="fx";d.textContent=em[i%em.length];
+ d.style.left=Math.random()*95+"vw";d.style.animationDelay=Math.random()*.5+"s";document.body.appendChild(d);setTimeout(()=>d.remove(),2300)}}
+function upStars(){document.getElementById("stars").textContent="⭐ "+save.stars}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 
-let S;
-function start(i){
-  const L = LEVELS[i];
-  S = {i, L, queue: shuffle(L.qs.map((q,k)=>({...q,k}))), total:L.qs.length, cleared:0, firstTry:0, missed:new Set()};
-  show();
-}
-function header(){
-  const pct = Math.round(S.cleared/S.total*100);
-  return `<div class="top"><button class="back" id="back">← 關卡</button>
-    <div class="bar"><i style="width:${pct}%"></i></div>
-    <span class="count">${S.cleared}/${S.total}</span></div>`;
-}
-function show(){
-  if(!S.queue.length) return finish();
-  const q = S.queue[0];
-  const retry = S.missed.has(q.k);
-  if(S.L.flash){
-    app.innerHTML = header()+`<div class="card">
-      <span class="src">${q.s}</span>${retry?'<span class="again">再看一次</span>':""}
-      <div class="q">${q.q}</div>
-      <button class="reveal" id="rv">想好了，看答案</button>
-      <div id="out"></div></div>`;
-    $("#rv").onclick=()=>{
-      $("#rv").hidden=true;
-      $("#out").innerHTML = `<div class="ans"><span class="lbl">參考答案</span><div>${md(q.a)}</div>
-        <span class="lbl">得分關鍵</span><div class="keys">${q.k.map(x=>`<span>${x}</span>`).join("")}</div></div>
-        <div class="row2" style="margin-top:12px"><button class="ghost" id="no">再看一次</button><button class="next" id="yes">我會了</button></div>`;
-      $("#yes").onclick=()=>{ if(!retry) S.firstTry++; S.cleared++; S.queue.shift(); show() };
-      $("#no").onclick=()=>{ S.missed.add(q.k); S.queue.push(S.queue.shift()); show() };
-    };
-  } else {
-    const order = shuffle(q.o.map((t,j)=>j));
-    app.innerHTML = header()+`<div class="card">
-      <span class="src">${q.s}</span>${retry?'<span class="again">剛剛錯過的題目</span>':""}
-      <div class="q">${q.q}</div>
-      <div class="opts">${order.map((j,n)=>`<button class="opt" data-j="${j}"><span class="k">${"ABCD"[n]}</span><span>${q.o[j]}</span></button>`).join("")}</div>
-      <div id="out"></div></div>`;
-    app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(q,+b.dataset.j,retry));
-  }
-  $("#back").onclick=home;
-  window.scrollTo(0,0);
-}
-function pick(q,j,retry){
-  const ok = j===q.a;
-  app.querySelectorAll(".opt").forEach(b=>{
-    const v=+b.dataset.j; b.disabled=true;
-    if(v===q.a) b.classList.add("right");
-    else if(v===j) b.classList.add("wrong");
-    else b.classList.add("dim");
-  });
-  $("#out").innerHTML = `<div class="fb ${ok?"ok":"no"}">
-    <span class="v">${ok?pickOne(["答對了！","正確！","漂亮！","沒錯！"]):"差一點！"}</span>
-    <p>${md(q.w)}</p>
-    ${q.t?`<span class="trap">陷阱：${q.t}</span>`:""}
-    ${ok?"":"<p style='font-size:.9rem;opacity:.8'>這題等一下會再出現。</p>"}
-  </div><button class="next" id="nx" style="width:100%;margin-top:12px">下一題</button>`;
-  $("#nx").onclick=()=>{
-    const cur=S.queue.shift();
-    if(ok){ S.cleared++; if(!retry) S.firstTry++; }
-    else { S.missed.add(cur.k); S.queue.push(cur); }
-    show();
-  };
-  $("#nx").focus({preventScroll:true});
-  $("#out").scrollIntoView({behavior:"smooth",block:"nearest"});
-}
-const pickOne=a=>a[Math.floor(Math.random()*a.length)];
-function finish(){
-  done[S.L.id]=true; save();
-  const nextI = S.i+1 < LEVELS.length ? S.i+1 : null;
-  app.innerHTML = `<div class="card end">
-    <div class="big">過關！</div>
-    <h2>${S.L.name}</h2>
-    <div class="stat">一次就答對 ${S.firstTry} / ${S.total} 題${S.missed.size?`，有 ${S.missed.size} 題是練了第二次才會的`:"，全部一次過！"}</div>
-    <div class="btns">
-      ${nextI!==null?`<button class="next" id="nl">下一關：${LEVELS[nextI].name}</button>`:""}
-      <button class="ghost" id="re">這關再玩一次</button>
-      <button class="ghost" id="hm">回到關卡</button>
-    </div></div>`;
-  if(nextI!==null) $("#nl").onclick=()=>start(nextI);
-  $("#re").onclick=()=>start(S.i);
-  $("#hm").onclick=home;
-  window.scrollTo(0,0);
-}
-document.addEventListener("keydown",e=>{
-  if(!S || !document.querySelector(".opt")) return;
-  const n="1234".indexOf(e.key); const opts=document.querySelectorAll(".opt:not(:disabled)");
-  if(n>=0 && opts[n]) opts[n].click();
-});
+// ===== 首頁地圖 =====
+function home(){L=null;upStars();
+ app.innerHTML=`<h1>📚 段考考點闖關</h1><div class="sub">B3 L1～L3・Review 1｜一次一關，全部用點的</div><div class="map">`+
+ LEVELS.map((l,i)=>`<button class="lv" onclick="start(${i})"><span class="em">${l.em}</span><span><div class="nm">第 ${i+1} 關｜${l.name}</div><div class="ds">${l.ds}</div></span><span class="ck">${save.done[i]?"🏅":"▶️"}</span></button>`).join("")+`</div>`}
+
+function start(i){sTap();L=i;queue=LEVELS[i].items.map(x=>Object.assign({},x));pos=0;combo=0;show()}
+
+function topbar(){const pct=Math.round(pos/queue.length*100);
+ return `<div class="top"><button class="back" onclick="home()">🏠</button><div class="bar"><i style="width:${pct}%"></i></div><span style="font-size:16px">${pos}/${queue.length}</span></div>`}
+
+function show(){if(pos>=queue.length)return win();
+ const it=queue[pos];firstTry=true;window.scrollTo(0,0);
+ it.t==="card"?card(it):quiz(it)}
+
+// ===== 重點卡 =====
+function card(it){let d=0;
+ const chips=it.chips.map(c=>c[0]==="row"?'<div class="row"></div>':`<span class="chip ${c[1]==="ar"?"ar":"k-"+(c[1]||"d")}" style="animation-delay:${(d++)*.18}s">${esc(c[0])}</span>`).join("");
+ const ex=esc(it.ex).replace(/\[\[(.+?)\]\]/g,(m,k)=>`<span class="key" data-k="${k}" onclick="reveal(this)">👆 點我</span>`);
+ app.innerHTML=topbar()+`<div class="box"><span class="tag">${it.tag}</span><div class="ttl">${it.title}</div><div class="chips">${chips}</div>
+ <div class="tip">${it.tip}</div><div class="ex">${ex}<button class="say" onclick="speak(queue[pos].ex)">🔊</button><div class="zh">${it.zh}</div></div>
+ <button class="btn" onclick="next()">我懂了 👉</button></div>`}
+function reveal(el){sTap();el.textContent=el.dataset.k;el.classList.add("open")}
+
+// ===== 點選題 =====
+function quiz(it){
+ const order=it.o.map((x,i)=>i).sort(()=>Math.random()-.5);
+ const q=esc(it.q).replace("___",'<span class="blank">?</span>').replace("___",'<span class="blank">?</span>');
+ app.innerHTML=topbar()+`<div class="box"><span class="tag">練習一下${it.again?'<span class="again">再見一次</span>':""}</span>
+ <div class="q">${q} <button class="say" onclick="speak(queue[pos].q)">🔊</button></div><div class="zh">${it.zh}</div>
+ <div class="opts">${order.map(i=>`<button class="opt" data-i="${i}" onclick="pick(this)">${esc(it.o[i])}</button>`).join("")}</div>
+ <div class="cheer" id="cheer"></div><div id="after"></div></div>`}
+function pick(b){const it=queue[pos],i=+b.dataset.i;
+ if(b.classList.contains("no")||document.querySelector(".opt.ok"))return;
+ if(i===it.a){b.classList.add("ok");sOK();combo++;save.stars+=firstTry?2:1;upStars();store();
+  document.getElementById("cheer").textContent=combo>=3?`🔥 ${combo} 連擊！`:CHEER[Math.floor(Math.random()*CHEER.length)];
+  if(combo%3===0)rain(["⭐","✨","🎉"]);
+  const full=it.q.replace("___",it.o[it.a].split(" … ")[0]).replace("___",(it.o[it.a].split(" … ")[1]||""));
+  document.getElementById("after").innerHTML=`<div class="why">💡 ${it.why}</div><button class="btn" onclick="speak('${full.replace(/'/g,"\\'")}')" style="background:#8ec5ff">🔊 聽完整句子</button><button class="btn" onclick="next()">下一個 👉</button>`;
+ }else{b.classList.add("no");sNO();combo=0;
+  document.getElementById("cheer").textContent=SOFT[Math.floor(Math.random()*SOFT.length)];
+  if(firstTry&&!it.again){queue.push(Object.assign({},it,{again:true}))}
+  firstTry=false}}
+function next(){sTap();pos++;show()}
+
+// ===== 過關 =====
+function win(){save.done[L]=true;save.stars+=5;store();upStars();sWIN();rain(["🏅","⭐","🎉","💖"]);
+ const nx=L+1<LEVELS.length;
+ app.innerHTML=`<div class="box" style="text-align:center"><div class="big">🏅</div><div class="ttl">第 ${L+1} 關 過關！</div>
+ <div style="font-size:20px">「${LEVELS[L].name}」你全部搞定了 ✨<br>獎勵 ⭐ +5</div>
+ ${nx?`<button class="btn" onclick="start(${L+1})">下一關：${LEVELS[L+1].em} ${LEVELS[L+1].name} 👉</button>`:`<div class="tip" style="margin-top:18px">🎊 六關全破！段考加油，你一定可以！</div>`}
+ <button class="btn" style="background:#b9a8f0" onclick="home()">回到地圖 🗺️</button></div>`}
 home();
 </script>
 </body>
