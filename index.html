@@ -73,6 +73,19 @@ background:var(--bg) repeating-conic-gradient(from 0deg at 50% -10%,rgba(184,149
 @keyframes float{50%{transform:translateY(-8px)}}
 .fx{position:fixed;top:-40px;font-size:28px;pointer-events:none;animation:fall 1.8s linear forwards;z-index:9;color:#c9a464}
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+.sbtn{display:block;width:100%;margin:0 0 6px;padding:14px;border-radius:20px;border:1.5px solid var(--gold);background:var(--card);color:var(--gold2);font-size:20px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 4px 14px rgba(140,109,59,.08)}
+.sq{width:100%;margin-top:4px;padding:14px 16px;font-size:20px;border-radius:18px;border:1.5px solid var(--gold);background:var(--card);color:var(--ink);font-family:inherit;outline:none}
+.letters{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:8px}
+.lt{padding:10px 0;border-radius:14px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;font-weight:800;font-family:inherit;cursor:pointer}
+.lt.on{background:var(--d);border-color:var(--gold);color:var(--gold2)}
+.res{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:14px 16px;margin-top:12px;animation:pop .25s}
+.rw{font-size:21px;font-weight:800}
+.rs{font-size:19px}
+.rtag{display:inline-block;margin-top:8px;font-size:14px;color:var(--gold2);border:1px solid var(--line);border-radius:12px;padding:1px 10px}
+.rb{display:flex;align-items:center;gap:10px;margin-top:10px}
+.go{flex:1;border:none;border-radius:14px;padding:10px;font-size:17px;font-weight:800;font-family:inherit;background:linear-gradient(135deg,#c9a464,#9b7a43);color:#fffaf0;cursor:pointer}
+mark{background:#f3e3bd;color:#3b2a10;border-radius:4px;padding:0 2px}
+.res .why{margin-top:8px;font-size:16px}
 </style>
 </head>
 <body>
@@ -357,9 +370,44 @@ function rain(em){for(let i=0;i<14;i++){const d=document.createElement("div");d.
 function upStars(){document.getElementById("stars").textContent="⭐ "+save.stars}
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 
+// ===== 查單字 =====
+let IDX=null,RES=[],SQ="",sT;
+function fillAns(q,ans){const p=ans.split(" … ");return q.replace("___",p[0]).replace("___",p[1]||"")}
+function buildIndex(){const out=[],seen={};LEVELS.forEach((l,li)=>l.items.forEach((it,ii)=>{
+ if(it.t==="card"){it.chips.forEach(c=>{if(c[0]==="row"||c[1]==="ar"||!/[a-z]/i.test(c[0]))return;const key=c[0].toLowerCase();if(seen[key])return;seen[key]=1;out.push({k:"w",t:c[0],li,ii})});
+  out.push({k:"e",t:it.ex.replace(/\[\[|\]\]/g,""),zh:it.zh,li,ii})}
+ else{if(/[一-鿿]/.test(it.q))return;const ans=it.o[it.a];out.push({k:"q",t:fillAns(it.q,ans),ans,why:it.why,zh:it.zh,li,ii})}}));return out}
+function enOnly(s){return s.replace(/[^\x20-\x7E]/g," ").replace(/\s+/g," ").trim()}
+function hl(s,q){s=esc(s);if(!q)return s;const r=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");return s.replace(r,"<mark>$1</mark>")}
+function searchPage(){sTap();L=null;IDX=IDX||buildIndex();window.scrollTo(0,0);
+ const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+ app.innerHTML=`<div class="top"><button class="back" onclick="home()">🏠</button><div class="ttl" style="margin:0">🔍 查單字</div></div>
+ <input id="sq" class="sq" placeholder="輸入英文或中文，例如 rely、末期" autocomplete="off" oninput="clearTimeout(sT);sT=setTimeout(()=>runSearch(this.value),180)">
+ <div class="sub" style="margin:10px 0 6px">不想打字？點字母看單字 👇</div>
+ <div class="letters">${letters.map(c=>`<button class="lt" onclick="runSearch('${c}',true)">${c}</button>`).join("")}</div>
+ <div id="res"></div>`;
+ if(SQ){document.getElementById("sq").value=SQ.length===1?"":SQ;runSearch(SQ,SQ.length===1)}}
+function runSearch(q,letter){q=(q||"").trim();SQ=q;const box=document.getElementById("res");if(!box)return;
+ document.querySelectorAll(".lt").forEach(b=>b.classList.toggle("on",!!(letter&&b.textContent===q)));
+ if(!q){box.innerHTML="";return}
+ const lq=q.toLowerCase();let words,others;
+ if(letter){words=IDX.filter(x=>x.k==="w"&&x.t.toLowerCase().startsWith(lq)).sort((a,b)=>a.t.localeCompare(b.t));others=[]}
+ else{const m=x=>(x.t+" "+(x.zh||"")+" "+(x.why||"")).toLowerCase().includes(lq);words=IDX.filter(x=>x.k==="w"&&m(x));others=IDX.filter(x=>x.k!=="w"&&m(x)).slice(0,40)}
+ RES=words.concat(others);
+ if(!RES.length){box.innerHTML=`<div class="tip" style="margin-top:16px">找不到「${esc(q)}」🌱 換個字試試看，或點上面的字母。</div>`;return}
+ const tag=x=>`<span class="rtag">${LEVELS[x.li].em} ${esc(LEVELS[x.li].name)}</span>`;
+ let h="";
+ if(words.length)h+=`<div class="sec">📒 單字卡（${words.length}）</div>`+words.map(x=>{const i=RES.indexOf(x);
+  return `<div class="res"><div class="rw">${hl(x.t,letter?"":q)}</div>${tag(x)}<div class="rb"><button class="say" onclick="sayR(${i})">🔊</button><button class="go" onclick="goR(${i})">去複習 👉</button></div></div>`}).join("");
+ if(others.length)h+=`<div class="sec">✏️ 題目與例句（${others.length}）</div>`+others.map(x=>{const i=RES.indexOf(x);
+  return `<div class="res"><div class="rs">${hl(x.t,q)}</div>${x.zh?`<div class="zh">${esc(x.zh)}</div>`:""}${x.k==="q"?`<div class="why">✅ ${esc(x.ans)}　💡 ${esc(x.why)}</div>`:""}${tag(x)}<div class="rb"><button class="say" onclick="sayR(${i})">🔊</button><button class="go" onclick="goR(${i})">去練習 👉</button></div></div>`}).join("");
+ box.innerHTML=h}
+function sayR(i){speak(enOnly(RES[i].t))}
+function goR(i){const x=RES[i];sTap();L=x.li;queue=LEVELS[x.li].items.map(y=>Object.assign({},y));pos=x.ii;combo=0;show()}
+
 // ===== 首頁地圖 =====
 function home(){L=null;upStars();
- app.innerHTML=`<div class="hero"><div class="arch"><img src="${ART}" alt=""></div><div><div class="orn">✦ ✧ ✦</div><h1>段考考點闖關</h1><div class="sub">B3 L1～L3・R1・考古題・高頻字彙<br>一次一關，全部用點的</div></div></div><div class="map">`+
+ app.innerHTML=`<div class="hero"><div class="arch"><img src="${ART}" alt=""></div><div><div class="orn">✦ ✧ ✦</div><h1>段考考點闖關</h1><div class="sub">B3 L1～L3・R1・考古題・高頻字彙<br>一次一關，全部用點的</div></div></div><button class="sbtn" onclick="searchPage()">🔍 查單字・查題目</button><div class="map">`+
  LEVELS.map((l,i)=>`${l.sec?`<div class="sec">${l.sec}</div>`:""}<button class="lv" onclick="start(${i})"><span class="em">${l.em}</span><span><div class="nm">第 ${i+1} 關｜${l.name}</div><div class="ds">${l.ds}</div></span><span class="ck">${save.done[i]?"🏅":"▶️"}</span></button>`).join("")+`</div>`}
 
 function start(i){sTap();L=i;queue=LEVELS[i].items.map(x=>Object.assign({},x));pos=0;combo=0;show()}
