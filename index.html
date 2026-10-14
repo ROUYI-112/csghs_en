@@ -135,6 +135,7 @@ body.shk .wrap{animation:shk .4s}
 .chkt{font-size:22px;font-weight:700;line-height:1.5}
 .ckb{background:#fff1b8;color:#7a4b00;padding:0 6px;border-radius:8px;border-bottom:3px solid #e8bd00}
 .chki{margin-top:8px;font-size:17px;color:var(--ink)}
+.srcb{font-size:13px;color:var(--gold2);border:1px solid var(--line);border-radius:10px;padding:1px 8px;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -481,12 +482,12 @@ function sylTiles(w){let i=0;return `<div class="syl">`+w.syl.split(" · ").map(
 let sylT=[];
 function sylPlay(slow){const it=queue[pos],w=it&&(it.w||it.wd);if(!w)return;sylT.forEach(clearTimeout);sylT=[];
  const tiles=[...document.querySelectorAll(".sy")];tiles.forEach(t=>t.classList.remove("lit"));
- speak(w.w,slow?.55:1);const n=tiles.length,dur=slow?Math.max(1000,w.w.length*190):Math.max(420,w.w.length*70),step=dur/n;
+ sayWord(w.w,slow);const n=tiles.length,dur=slow?Math.max(1000,w.w.length*190):Math.max(420,w.w.length*70),step=dur/n;
  tiles.forEach((t,i)=>sylT.push(setTimeout(()=>{t.classList.add("lit");if(slow)SFX.tick(i)},150+i*step)))}
 function wcard(it){const w=it.w,lv=LEVELS[L],lm="https://www.ldoceonline.com/dictionary/"+encodeURIComponent(w.w.toLowerCase().replace(/ /g,"-"));
  const ex=esc(w.ex).replace(/\[\[(.+?)\]\]/g,(m,k)=>`<span class="key" data-k="${k}" onclick="reveal(this)">👆 點我</span>`);
  app.innerHTML=topbar()+`<div class="box wbox"><span class="tag">${lv.lesson}・單字卡 ${pos+1} / ${lv.words.length}</span>
- <div class="word">${sylTiles(w)}</div><div class="kk">[${esc(w.kk)}]　<b>${esc(w.pos)}</b></div>
+ <div class="word">${sylTiles(w)}</div><div class="kk">[${esc(w.kk)}]　<b>${esc(w.pos)}</b>　<span id="srcb" class="srcb"></span></div>
  <div class="wbtns"><button class="say big" onclick="sylPlay(0)" aria-label="發音">🔊</button><button class="pill" onclick="sylPlay(1)">🐢 拆音節慢慢唸</button><a class="pill" href="${lm}" target="_blank" rel="noopener">📕 Longman 真人發音</a></div>
  <div class="chk"><div class="chkh">🧩 短詞搭配一起背</div><div class="chkt">${esc(w.ch).replace("___",`<b class="ckb">${esc(w.ca)}</b>`)}<button class="say" onclick="speak(queue[pos].w.ch.replace('___',queue[pos].w.ca).replace(/＝.*$/,''),.95)">🔊</button></div><div class="chki">🖼️ 想像畫面：${esc(w.img)}</div></div>
  <div id="zhbox"><button class="reveal" onclick="showZh()">👆 點我看中文${w.mk?`<span class="mkn">🖍️ 老師畫了 ${w.mk.length} 個重點</span>`:""}</button></div>
@@ -495,6 +496,16 @@ function wcard(it){const w=it.w,lv=LEVELS[L],lm="https://www.ldoceonline.com/dic
  setTimeout(()=>sylPlay(0),380)}
 function mkHTML(list){return list&&list.length?`<div class="mkbox"><div class="mkh">🖍️ 老師畫重點</div>${list.map(([c,t])=>`<div class="mk mk-${c}">${esc(t)}</div>`).join("")}<div class="mkl">🟦 藍＝常用 chunk　🟩 綠＝文法用法　🟥 紅＝要會的字　🟨 黃＝重點</div></div>`:""}
 function showZh(){const w=queue[pos].w;SFX.kira();document.getElementById("zhbox").innerHTML=`<div class="zhbig">${esc(w.zh)}</div><div class="tip">🔗 常考搭配：${esc(w.col)}</div>${mkHTML(w.mk)}`}
+
+// ===== 真人發音（免費字典 API，失敗就改用語音合成） =====
+const RA={};
+function realURL(w){w=w.toLowerCase().trim();if(w in RA)return RA[w];
+ RA[w]=fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(w)).then(r=>r.ok?r.json():[]).then(j=>{const L=[];(Array.isArray(j)?j:[]).forEach(e=>(e.phonetics||[]).forEach(p=>p.audio&&L.push(p.audio)));
+  return L.find(u=>/-us\.mp3/i.test(u))||L.find(u=>/-uk\.mp3/i.test(u))||L[0]||null}).catch(()=>null);return RA[w]}
+function srcBadge(k){const b=document.getElementById("srcb");if(b)b.textContent=k==="real"?"🎙️ 真人錄音":"🤖 語音合成"}
+async function sayWord(w,slow){if(!slow&&!/\s/.test(w.trim())){try{const u=await Promise.race([realURL(w),new Promise(r=>setTimeout(()=>r(null),1800))]);
+ if(u){speechSynthesis.cancel();const a=new Audio(u);a.playbackRate=RATE>1.05?1.1:1;await a.play();srcBadge("real");return "real"}}catch(e){}}
+ speak(w,slow?.55:1);srcBadge("tts");return "tts"}
 
 // ===== 日漫風音效與特效 =====
 function T(fn){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();fn(ac.currentTime)}catch(e){}}
@@ -609,7 +620,7 @@ function home(){L=null;upStars();window.scrollTo(0,0);
  ids.map((i,k)=>{const l=LEVELS[i];return `${l.sec?`<div class="sec">${l.sec}</div>`:""}<button class="lv" onclick="start(${i})"><span class="em">${l.em}</span><span><div class="nm">第 ${k+1} 關｜${l.name}</div><div class="ds">${l.ds}</div></span><span class="ck">${save.done[i]?"🏅":"▶️"}</span></button>`}).join("")+`</div>`}
 
 function mkQueue(i){const l=LEVELS[i];return l.words?buildWordQueue(l):l.items.map(x=>Object.assign({},x))}
-function start(i){sTap();L=i;queue=mkQueue(i);pos=0;combo=0;show()}
+function start(i){sTap();L=i;queue=mkQueue(i);pos=0;combo=0;if(LEVELS[i].words)LEVELS[i].words.forEach(w=>realURL(w.w));show()}
 
 function topbar(){const pct=Math.round(pos/queue.length*100);
  return `<div class="top"><button class="back" onclick="home()">🏠</button><div class="bar"><i style="width:${pct}%"></i></div><span style="font-size:16px">${pos}/${queue.length}</span></div>`}
@@ -632,16 +643,16 @@ function quiz(it){
  const order=it.o.map((x,i)=>i).sort(()=>Math.random()-.5);
  const q=esc(it.q).replace("___",'<span class="blank">?</span>').replace("___",'<span class="blank">?</span>');
  app.innerHTML=topbar()+`<div class="box"><span class="tag">練習一下${it.again?'<span class="again">再見一次</span>':""}</span>
- <div class="q">${q} <button class="say" onclick="speak(queue[pos].say||queue[pos].q)">🔊</button></div>${it.zh?`<div class="zh">${it.zh}</div>`:""}
+ <div class="q">${q} <button class="say" onclick="queue[pos].say?sayWord(queue[pos].say):speak(queue[pos].q)">🔊</button></div>${it.zh?`<div class="zh">${it.zh}</div>`:""}
  <div class="opts">${order.map(i=>`<button class="opt" data-i="${i}" onclick="pick(this)">${esc(it.o[i])}</button>`).join("")}</div>
  <div class="cheer" id="cheer"></div><div id="after"></div></div>`;
- if(it.auto)setTimeout(()=>speak(it.say),320)}
+ if(it.auto)setTimeout(()=>sayWord(it.say),320)}
 function pick(b){const it=queue[pos],i=+b.dataset.i;
  if(b.classList.contains("no")||document.querySelector(".opt.ok"))return;
  if(i===it.a){b.classList.add("ok");sOK();combo++;const gain=firstTry?2:1;save.stars+=gain;upStars();store();floatTxt(b,"+"+gain+"⭐");
   if(combo>=3&&combo%3===0){setTimeout(()=>{SFX.combo();shake();burst(combo+" COMBO🔥",1)},250)}else burst(STAMP[Math.floor(Math.random()*STAMP.length)]);
   document.getElementById("cheer").textContent=combo>=3?`🔥 ${combo} 連擊！`:CHEER[Math.floor(Math.random()*CHEER.length)];
-  if(combo%3===0)rain(["✦","✧","⭐"]);if(it.wd)setTimeout(()=>speak(it.kind==="listen"?it.wd.w:it.wd.ex,it.kind==="listen"?1:.95),350);
+  if(combo%3===0)rain(["✦","✧","⭐"]);if(it.wd)setTimeout(()=>it.kind==="listen"?sayWord(it.wd.w):speak(it.wd.ex,.95),350);
   const full=it.full||it.q.replace("___",it.o[it.a].split(" … ")[0]).replace("___",(it.o[it.a].split(" … ")[1]||""));
   document.getElementById("after").innerHTML=`${it.wd?`<div class="mini">${sylTiles(it.wd)}<div class="zh">[${esc(it.wd.kk)}]</div></div>`:""}<div class="why">💡 ${it.why}</div><button onclick="speak('${full.replace(/'/g,"\\'")}')" class="btn alt">🔊 ${it.kind==="listen"?"再聽一次":it.kind==="chunk"?"聽整串搭配":"聽完整句子"}</button><button class="btn" onclick="next()">下一個 👉</button>`;
  }else{b.classList.add("no");sNO();combo=0;
