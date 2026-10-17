@@ -88,7 +88,7 @@ background:var(--bg) repeating-conic-gradient(from 0deg at 50% -10%,rgba(184,149
 mark{background:#f3e3bd;color:#3b2a10;border-radius:4px;padding:0 2px}
 .res .why{margin-top:8px;font-size:16px}
 
-.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 0 12px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
 .tb{padding:12px 4px;font-size:16px!important;border-radius:18px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;font-weight:800;font-family:inherit;cursor:pointer}
 .tb.on{background:linear-gradient(135deg,#c9a464,#9b7a43);color:#fffaf0;border-color:transparent;box-shadow:0 6px 16px rgba(140,109,59,.25)}
 .prog{margin:0 0 12px}.prog .pt{font-weight:800;color:var(--gold2);margin-bottom:6px;font-size:17px}
@@ -140,6 +140,23 @@ body.shk .wrap{animation:shk .4s}
 .extl{margin:12px 0;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:12px 14px}
 .extl .e1{font-size:17px}.extl .e2{font-size:18px;font-weight:800;color:var(--gold2)}
 .extl .ea{margin:6px 0 6px 6px;font-size:16px;color:#4d7a48}
+
+.pstep{font-size:20px;font-weight:900;color:var(--gold2);margin:4px 0 12px}
+.sent{font-size:23px;line-height:2.3;padding:6px 2px}
+.tk{display:inline-block;padding:0 6px;margin:0;border-radius:8px;cursor:pointer;transition:all .15s;border:2px solid transparent}
+.tapme .tk:hover{background:var(--d)}
+.tk.tv,.plg .tv{border:2.5px solid #e03131;border-radius:999px;color:#c92a2a;font-weight:800;padding:0 7px}
+.tk.tcl,.plg .tcl{background:#d4f4f8;color:#163c44;border-radius:0}
+.tk.tcs,.plg .tcs{border-radius:10px 0 0 10px;border-left:3px solid #1fb6cc}
+.tk.tce,.plg .tce{border-radius:0 10px 10px 0;border-right:3px solid #1fb6cc}
+.plg .tcs.tce{border-radius:10px;border:2px solid #1fb6cc;padding:0 6px}
+.tk.ta,.plg .ta{text-decoration:underline wavy #2f9e44 3px;text-underline-offset:6px;font-weight:800}
+.tk.tl,.plg .tl{background:#fff1b8;color:#7a4b00;border-radius:8px;font-weight:800;box-shadow:inset 0 -3px 0 #e8bd00}
+.tk.tno{animation:shake .4s;background:#fde3e3}
+.plg{font-size:14px;color:var(--soft);margin:4px 0 6px;display:flex;flex-wrap:wrap;gap:10px}
+.plg span{padding:0 6px}
+.pdone{background:var(--card);border:1.5px solid var(--gold);border-radius:18px;padding:14px 16px;margin-top:8px;line-height:1.7;font-size:17px;animation:pop .35s}
+.pdh{font-size:20px;font-weight:900;color:var(--gold2);margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -514,6 +531,189 @@ async function sayWord(w,slow){if(!slow&&!/\s/.test(w.trim())){try{const u=await
  if(u){speechSynthesis.cancel();const a=new Audio(u);a.playbackRate=RATE>1.05?1.1:1;await a.play();srcBadge("real");return "real"}}catch(e){}}
  speak(w,slow?.55:1);srcBadge("tts");return "tts"}
 
+// ===== 雜誌讀法：句子解剖 =====
+const MAG_CONCEPT={exam:4,em:"📰",sec:"📰 Unit 2 Jane Goodall｜雜誌讀法",name:"讀法三步驟＋三種子句",ds:"圈動詞 → 框子句 → 標邏輯；that、as、if 怎麼判斷",items:[
+ {t:"card",tag:"雜誌讀法",title:"每句話做三個動作",chips:[["① 圈主要動詞","a"],["→","ar"],["② 框子句","b"],["→","ar"],["③ 標邏輯","c"]],
+  tip:"🔑 不是逐字翻譯！先找整句真正的 S＋V，再看子句在做什麼工作，最後看前後是時間、原因、條件、目的、對比還是結果。",ex:"Her work also [[showed]] that chimpanzees form close family bonds.",zh:"她的研究也顯示，黑猩猩會形成緊密的家庭連結。"},
+ {t:"card",tag:"學測必考",title:"三種子句怎麼分",chips:[["名詞子句","a"],["當主詞／受詞／補語","d"],["row",""],["形容詞子句","b"],["修飾前面的名詞（先行詞）","d"],["row",""],["副詞子句","c"],["表時間／原因／條件／讓步","d"]],
+  tip:"🔑 名詞子句＝整串變成「一個東西」；形容詞子句＝在描述「誰」；副詞子句＝兩件事的「關係」。",ex:"The chimpanzee [[that she observed]] used a tool.",zh:"她觀察的那隻黑猩猩使用了工具。（形容詞子句修飾 chimpanzee）"},
+ {t:"card",tag:"易混淆",title:"that 的兩種工作",chips:[["program that operates","b"],["that 當主詞 → 後面直接接動詞","d"],["row",""],["threats that … posed","a"],["that 當受詞 → 後面是主詞＋動詞（可省略）","d"]],
+  tip:"🔑 看 that 後面缺什麼：缺主詞 → that 當主詞；缺受詞 → that 當受詞；什麼都不缺 → 名詞子句的連接詞。",ex:"Her work showed [[that]] chimpanzees display recognizable emotions.",zh:"這個 that 後面句子完整 → 名詞子句連接詞。"},
+ {t:"card",tag:"多義字",title:"as 不一定是「因為」",chips:[["as + 原因 = 因為","a"],["As the years passed = 隨著","b"],["As she once said = 正如","c"],["as + 時間 = 當…時","d"]],
+  tip:"🔑 看前後兩件事的關係，再決定 as 的意思。",ex:"This was a major discovery, [[as]] tool use had previously been thought to be a uniquely human ability.",zh:"這是重大發現，因為過去認為使用工具是人類獨有的能力。"},
+ {t:"card",tag:"易混淆",title:"if：條件 or 是否？",chips:[["If + 子句, 主句","c"],["條件副詞子句（如果）","d"],["row",""],["wonder / ask + if","a"],["名詞子句（是否）","d"]],
+  tip:"🔑 if 在句首、後面接逗號和主句 → 條件；if 當動詞的受詞 → 是否。",ex:"I wonder [[if]] they will participate.",zh:"我想知道他們是否會參加。（名詞子句）"},
+ {t:"quiz",q:"Her work showed ___ chimpanzees form close family bonds.",zh:"學測仿真題 1",o:["that","which","what","who"],a:0,why:"showed 後面需要「顯示的內容」，子句完整 → 名詞子句連接詞 that。"},
+ {t:"quiz",q:"The institute, ___ promotes wildlife conservation, was founded by Goodall.",zh:"學測仿真題 2",o:["which","that","what","where"],a:0,why:"逗號後補充說明（非限定）→ 只能用 which，不能用 that。"},
+ {t:"quiz",q:"The threats ___ illegal hunting posed to chimpanzees were serious.",zh:"學測仿真題 3",o:["that","who","where","what"],a:0,why:"先行詞 threats（物），子句缺 posed 的受詞 → 關代 that 當受詞。"},
+ {t:"quiz",q:"___ the years passed, Goodall became more concerned about conservation.",zh:"學測仿真題 4",o:["As","Unless","Although","Despite"],a:0,why:"as 表「隨著」時間推移；Despite 後面不能接子句。"},
+ {t:"quiz",q:"___ people are not involved in conservation, the efforts may fail.",zh:"學測仿真題 5",o:["If","Because of","Despite","In addition to"],a:0,why:"條件副詞子句：如果…；Because of、Despite、In addition to 都是介系詞，後面不能接子句。"},
+ {t:"quiz",q:"Which word in this sentence is NOT a conjunction? \"A turning point came when she met Louis Leakey.\"",zh:"哪一個不是連接詞？",o:["turning point","when","—","（都是）"],a:0,why:"turning point 是名詞片語（轉捩點），不是轉折連接詞；when 才是連接詞。"}
+]};
+const MAG_SENT=[
+ {s:"Her work also showed that chimpanzees form close family bonds and display recognizable emotions.",v:["showed"],cl:"that chimpanzees form close family bonds and display recognizable emotions.",ct:"名詞子句",ctx:"that 子句當 showed 的受詞（顯示的內容）。子句內 form 和 display 共用主詞 chimpanzees。",lg:"補充",lgw:"also",zh:"她的研究也顯示，黑猩猩會形成緊密的家庭連結，並表現出可辨識的情緒。",line:"第 19–20 行"},
+ {s:"This was a major discovery, as tool use had previously been thought to be a uniquely human ability.",v:["was"],cl:"as tool use had previously been thought to be a uniquely human ability.",ct:"副詞子句",ctx:"as 引導原因副詞子句，不是名詞子句；had been thought 是過去完成被動。",lg:"原因",lgw:"as",zh:"這是重大發現，因為過去一直認為使用工具是人類獨有的能力。",line:"第 18–19 行"},
+ {s:"He gave her the opportunity to take part in field research in Africa — an opportunity that was uncommon for women at the time.",v:["gave"],cl:"that was uncommon for women at the time.",ct:"形容詞子句",ctx:"that 在子句裡當主詞，後面直接接 was。",ante:"opportunity",zh:"他給了她參與非洲田野研究的機會，這種機會對當時的女性並不常見。",line:"第 12–14 行"},
+ {s:"She founded the Jane Goodall Institute, which promotes wildlife conservation and the sustainable development of local communities.",v:["founded"],cl:"which promotes wildlife conservation and the sustainable development of local communities.",ct:"形容詞子句",ctx:"逗號＋which ＝ 非限定（補充說明），不能換成 that。",ante:"institute,",zh:"她創立了珍・古德協會，推動野生動物保育與地方社區的永續發展。",line:"第 33–37 行"},
+ {s:"You must involve the people who live there.",v:["must","involve"],cl:"who live there.",ct:"形容詞子句",ctx:"who 代替 people，在子句裡當主詞。",ante:"people",zh:"你必須讓住在當地的人參與。",line:"第 49–51 行"},
+ {s:"If they are not part of the solution, there will be no solution.",v:["will","be"],cl:"If they are not part of the solution,",ct:"副詞子句",ctx:"If 在句首＋逗號＋主句 → 條件副詞子句。子句裡的 are 不是主要動詞！",lg:"條件",lgw:"if",zh:"如果他們不是解決方案的一部分，就不會有解決方案。",line:"第 51 行"},
+ {s:"As the years passed, Goodall became increasingly concerned about the threats to chimpanzees.",v:["became"],cl:"As the years passed,",ct:"副詞子句",ctx:"As 表示「隨著」：歲月流逝 ↔ 越來越擔憂，兩個變化同步發展。",lg:"隨著",lgw:"as",zh:"隨著歲月流逝，古德越來越關心黑猩猩面臨的威脅。",line:"第 24 行"},
+ {s:"The threats that deforestation and illegal hunting posed to chimpanzees were serious.",v:["were"],cl:"that deforestation and illegal hunting posed to chimpanzees",ct:"形容詞子句",ctx:"that 當 posed 的受詞，子句主詞是 deforestation and illegal hunting；主要動詞在最後的 were！",ante:"threats",zh:"森林砍伐和非法獵捕對黑猩猩造成的威脅很嚴重。",line:"第 25–27 行"},
+ {s:"I wonder if they will participate.",v:["wonder"],cl:"if they will participate.",ct:"名詞子句",ctx:"if 子句當 wonder 的受詞，意思是「是否」，不是條件！",zh:"我想知道他們是否會參加。",line:"對照句"},
+ {s:"After she met Louis Leakey, she began field research.",v:["began"],cl:"After she met Louis Leakey,",ct:"副詞子句",ctx:"After 表示時間先後：先遇見李奇，再開始研究。",lg:"時間",lgw:"after",zh:"遇見路易斯・李奇之後，她開始了田野研究。",line:"對照句"}
+];
+const LOGICS=["時間","原因","條件","目的","對比","補充","隨著","轉折","替代","總結"];
+function tclean(t){return t.toLowerCase().replace(/[^a-z']/g,"")}
+function prepParse(x){const toks=x.s.replace(/—/g," — ").split(/\s+/).filter(Boolean),cw=x.cl.split(/\s+/).map(tclean).filter(Boolean),tc=toks.map(tclean);
+ let st=-1;for(let i=0;i<=tc.length-cw.length;i++){if(cw.every((w,j)=>tc[i+j]===w)){st=i;break}}
+ const ante=x.ante?tclean(x.ante):null;return Object.assign({t:"parse",toks,c0:st,c1:st+cw.length-1,step:0,ante,anteIdx:ante?tc.map((w,i)=>w===ante&&(i<st)?i:-1).filter(i=>i>=0):[]},x)}
+MAG_CONCEPT.items.forEach(()=>{});
+LEVELS.push(MAG_CONCEPT);
+LEVELS.push({exam:4,em:"🔍",sec:"",name:"句子解剖 ①",ds:"showed that… / as 原因 / an opportunity that… / , which… / the people who…",items:MAG_SENT.slice(0,5).map(prepParse)});
+LEVELS.push({exam:4,em:"🔍",sec:"",name:"句子解剖 ②",ds:"If… / As the years passed / the threats that… / wonder if… / After…",items:MAG_SENT.slice(5).map(prepParse)});
+
+const AS_M=["當…時","因為","隨著","按照","作為","一樣（比較）","雖然（讓步）","正如"];
+function asQ(q,a,why,zh){const o=shuffle([a,...shuffle(AS_M.filter(x=>x!==a)).slice(0,3)]);return {t:"quiz",q,zh:zh||"這個 as 是什麼意思？",o,a:o.indexOf(a),why}}
+LEVELS.push({exam:4,em:"🔀",sec:"",name:"as 的 8 種用法",ds:"當…時、因為、隨著、按照、作為、比較、讓步、正如",items:[
+ {t:"card",tag:"as 多義",title:"as 的 8 種意思",chips:[["① 當…時 as + S + V","a"],["② 因為 as + S + V","b"],["③ 隨著 as + S + V","c"],["④ 按照 as + S + V","d"],["⑤ 作為 as + 名詞","e"],["⑥ 一樣 as + adj. + as","a"],["⑦ 雖然 adj. + as + S + V","b"],["⑧ 正如 As you know…","c"]],
+  tip:"🔑 不能看到 as 就翻「當…時」或「因為」！先看詞性 → 再看句型 → 最後判斷語意。",ex:"[[Young as she is]], she is wise.",zh:"雖然她年紀小，卻很有智慧。（讓步倒裝）"},
+ {t:"card",tag:"解題口訣",title:"看到 as，依序問四個問題",chips:[["① 後面是名詞？","a"],["→","ar"],["作為","d"],["row",""],["② as + adj./adv. + as？","b"],["→","ar"],["比較","d"],["row",""],["③ 前後有時間、狀態變化？","c"],["→","ar"],["當…時／隨著","d"],["row",""],["④ 前後是理由和結果？","e"],["→","ar"],["因為","d"]],
+  tip:"🔑 As you know / As she said / As expected → 通常翻「正如」。",ex:"[[As we all know]], exercise is important.",zh:"正如大家所知，運動很重要。"},
+ {t:"card",tag:"Jane Goodall 課文",title:"課文裡的 4 個 as",chips:[["第 18 行 as ＝ 因為","b"],["第 24 行 As ＝ 隨著","c"],["第 43 行 As ＝ 當…之際","a"],["第 49 行 As ＝ 正如","e"]],
+  tip:"🔑 柔穎先把這四個抓穩，再補比較句型和讓步倒裝。",ex:"[[As she once said]], \"If you want conservation to work, you must involve the people who live there.\"",zh:"正如她曾說過：「如果你希望保育成功，就必須讓當地居民參與。」"},
+ asQ("This was a major discovery, as tool use had previously been thought to be a uniquely human ability.","因為","後半句在解釋「為什麼是重大發現」→ as ≈ because。（第 18 行）"),
+ asQ("As the years passed, Goodall became increasingly concerned about the threats.","隨著","歲月流逝 ↔ 越來越擔憂，兩個變化同步發展 → 隨著。（第 24 行）"),
+ asQ("As we mark the first anniversary of Jane Goodall's passing, her life proves that change can begin with one person.","當…時","「當我們紀念逝世一週年之際」→ 時間；不是原因，也不是同步變化。（第 43 行）"),
+ asQ("As she once said, \"You must involve the people who live there.\"","正如","As she said → 引述，翻「正如」。（第 49 行）"),
+ asQ("As I was studying, the phone rang.","當…時","讀書和電話響，兩件事時間重疊。"),
+ asQ("As I was tired, I went to bed.","因為","前面是理由，後面是結果。"),
+ asQ("Do as I told you.","按照","表示做事的方式：照我說的做。"),
+ asQ("She works as a teacher.","作為","as 後面接身分名詞 → 作為、擔任。"),
+ asQ("She is as tall as her sister.","一樣（比較）","as + adj. + as → 和…一樣。"),
+ asQ("Young as she is, she is wise.","雖然（讓步）","形容詞放到 as 前面 → 讓步倒裝：雖然。"),
+ {t:"quiz",q:"___ the years passed, Jane became more concerned about wildlife.",zh:"as 練習 1",o:["As","Because of","Despite","Unless"],a:0,why:"隨著時間過去 → As；Because of、Despite 是介系詞，不能接子句。"},
+ {t:"quiz",q:"The discovery was important, ___ people had believed that only humans could use tools.",zh:"as 練習 2",o:["as","although","unless","while"],a:0,why:"後面說明「為什麼重要」→ as ＝ 因為。"},
+ {t:"quiz",q:"___ she once said, everyone can make a difference.",zh:"as 練習 3",o:["As","Despite","Unless","Because of"],a:0,why:"As she once said → 正如她曾說。"},
+ {t:"quiz",q:"She worked ___ a researcher in Africa.",zh:"as 練習 4",o:["as","like","while","because"],a:0,why:"後面接身分名詞 → as ＝ 作為；like 是「像」，不是真的身分。"},
+ {t:"quiz",q:"Tired ___ she was, she continued working.",zh:"as 練習 5",o:["as","because","if","when"],a:0,why:"形容詞 Tired 放句首 + as + S + V → 讓步倒裝：雖然很累。"},
+ prepParse({s:"As we mark the first anniversary of Jane Goodall's passing, her amazing life proves that meaningful change can begin with a single person.",v:["proves"],cl:"As we mark the first anniversary of Jane Goodall's passing,",ct:"副詞子句",ctx:"As ＝ 當…之際（時間）。另外 that meaningful change can begin… 是 proves 的受詞（名詞子句）。",lg:"時間",lgw:"as",zh:"當我們紀念珍・古德逝世一週年之際，她非凡的一生證明，有意義的改變可以從一個人開始。",line:"第 43 行"})
+]});
+const PSTEP=["① 👆 點出整句的「主要動詞」","② 框起來的子句是哪一種？","③ 👆 點出它修飾的「先行詞」","④ 這個連接詞表示什麼邏輯？"];
+function parse(it){if(!it.steps){it.steps=[0,1];if(it.ante)it.steps.push(2);if(it.lg)it.steps.push(3);it.si=0;it.found={};it.miss=0}
+ const stp=it.steps[it.si],done=it.si>=it.steps.length;
+ const toks=it.toks.map((t,i)=>{const cls=["tk"];if(it.found.v&&it.found.v.includes(i))cls.push("tv");if(it.si>=1&&i>=it.c0&&i<=it.c1)cls.push("tcl");if(i===it.c0&&it.si>=1)cls.push("tcs");if(i===it.c1&&it.si>=1)cls.push("tce");if(it.found.a===i)cls.push("ta");if(it.found.l===i||(stp===3&&!done&&tclean(t)===it.lgw))cls.push("tl");
+  return `<span class="${cls.join(" ")}" onclick="ptap(${i})">${esc(t)}</span>`}).join("");
+ let panel="";
+ if(done){panel=`<div class="pdone"><div class="pdh">✨ 解剖完成！</div>
+  <div>🔴 主要動詞：<b>${it.v.join(" ")}</b></div><div>🟦 ${it.ct}：${esc(it.ctx)}</div>${it.ante?`<div>〰️ 先行詞：<b>${esc(it.ante.replace(/,$/,""))}</b></div>`:""}${it.lg?`<div>🏷️ 邏輯：<b>${it.lg}</b>（${esc(it.lgw)}）</div>`:""}
+  <div class="zh" style="margin-top:8px">📖 ${esc(it.zh)}</div></div><button class="btn alt" onclick="speak(queue[pos].s,.95)">🔊 聽整句</button><button class="btn" onclick="next()">下一句 👉</button>`}
+ else if(stp===1){panel=`<div class="opts">${shuffle(["名詞子句","形容詞子句","副詞子句","分詞構句"]).map(o=>`<button class="opt" onclick="pans(this,'${o}')">${o}</button>`).join("")}</div>`}
+ else if(stp===3){const os=shuffle([it.lg,...shuffle(LOGICS.filter(x=>x!==it.lg)).slice(0,3)]);panel=`<div class="opts">${os.map(o=>`<button class="opt" onclick="pans(this,'${o}')">${o}</button>`).join("")}</div>`}
+ else panel=`<div class="sub" style="margin-top:12px">${it.miss>=2?(stp===0?"💡 提示：子句裡的動詞不算，找整句的 S＋V！":"💡 提示：子句前面那個名詞"):"直接點句子裡的字"}</div>`;
+ app.innerHTML=topbar()+`<div class="box"><span class="tag">🔍 ${esc(it.line)}</span><div class="pstep">${done?"🎉 這句完成了":PSTEP[stp]}</div>
+ <div class="sent ${stp===0||stp===2?"tapme":""}">${toks}</div>
+ <div class="plg"><span class="tv">動詞</span> <span class="tcl tcs tce">子句</span> <span class="ta">先行詞</span> <span class="tl">連接詞</span></div>
+ <div class="cheer" id="cheer"></div>${panel}</div>`}
+function pgood(msg){it_=queue[pos];sOK();combo++;save.stars+=it_.miss?1:2;upStars();store();burst(STAMP[Math.floor(Math.random()*STAMP.length)]);it_.miss=0;it_.si++;setTimeout(()=>{parse(queue[pos]);const c=document.getElementById("cheer");if(c)c.textContent=msg||""},550)}
+let it_;
+function pbad(el){const it=queue[pos];sNO();combo=0;it.miss++;if(el){el.classList.add("tno");setTimeout(()=>el.classList.remove("tno"),450)}const c=document.getElementById("cheer");if(c)c.textContent=SOFT[Math.floor(Math.random()*SOFT.length)];if(it.miss===2)setTimeout(()=>parse(it),500)}
+function ptap(i){const it=queue[pos];if(!it||it.t!=="parse"||it.si>=it.steps.length)return;const stp=it.steps[it.si],w=tclean(it.toks[i]),el=document.querySelectorAll(".tk")[i];
+ if(stp===0){const inCl=i>=it.c0&&i<=it.c1;if(!inCl&&it.v.includes(w)){it.found.v=it.toks.map((t,j)=>!(j>=it.c0&&j<=it.c1)&&it.v.includes(tclean(t))?j:-1).filter(j=>j>=0);pgood("🔴 主要動詞圈到了！")}else pbad(el)}
+ else if(stp===2){if(it.anteIdx.includes(i)){it.found.a=i;pgood("〰️ 先行詞找到了！")}else pbad(el)}}
+function pans(b,o){const it=queue[pos],stp=it.steps[it.si];if(b.classList.contains("no"))return;const ok=stp===1?o===it.ct:o===it.lg;
+ if(ok){b.classList.add("ok");if(stp===3)it.found.l=it.toks.findIndex(t=>tclean(t)===it.lgw);pgood(stp===1?"🟦 "+it.ct+"！":"🏷️ "+it.lg+"！")}else{b.classList.add("no");pbad(null)}}
+
+LEVELS.push({exam:4,em:"🔄",sec:"📰 Unit 1 疫苗新技術｜雜誌讀法",name:"though：雖然 or 不過？",ds:"看文法功能，不看位置：連接詞找主句、轉折副詞找新觀點",items:[
+ {t:"card",tag:"though 兩種身分",title:"先判斷 though 在做什麼工作",chips:[["Though + 子句","b"],["＝ 雖然（讓步連接詞）","d"],["→","ar"],["找另一個主句＝重點","c"],["row",""],[", though,／句尾 though","a"],["＝ 不過（轉折副詞）","d"],["→","ar"],["找和前文的轉折＝新觀點","e"]],
+  tip:"🔑 不要背「句首不重要、句中句尾重要」！要看 though 是連接詞還是轉折副詞。",ex:"If the technology proves successful, [[though]], scientists believe the same method could be used…",zh:"不過，如果這項技術證實成功，科學家相信同樣的方法也能用在…"},
+ {t:"card",tag:"四種位置",title:"though 在哪裡？重點在哪裡？",chips:[["Though A, B.","b"],["→","ar"],["B 是重點","d"],["row",""],["A, though B.","b"],["→","ar"],["A 還是重點！","d"],["row",""],["A, though, B.","a"],["→","ar"],["注意 B 的新觀點","d"],["row",""],["A. B, though.","a"],["→","ar"],["B 是轉折後的訊息","d"]],
+  tip:"🔑 前兩種 though 是「雖然」，主句才是重點；後兩種 though 是「不過」，轉折後的話是重點。",ex:"She kept working, [[though she was tired]].",zh:"她繼續工作，雖然她很累。（重點仍是「繼續工作」）"},
+ {t:"card",tag:"Unit 1 第 27–30 行",title:"課文的 though 轉折了什麼？",chips:[["前文：More testing is needed.","b"],["→","ar"],["though 不過","a"],["→","ar"],["後文：如果成功，未來可用於其他病毒","c"]],
+  tip:"🔑 though 不是否定前面的限制，而是把文章從「審慎保留」轉回「未來展望」。注意 if：成功還是條件，不是已經發生的事實！",ex:"[[If]] the technology proves successful, though, scientists believe the same method could be used to develop vaccines against other groups of viruses in the future.",zh:"不過，如果這項技術最終證實成功，科學家相信未來同樣的方法也可能用來研發對抗其他病毒的疫苗。"},
+ {t:"quiz",q:"Though she was tired, she kept working. — 這句的重點是？",zh:"Though A, B.",o:["她繼續工作","她很累","兩件事一樣重要","她停下來休息"],a:0,why:"Though + 子句＝雖然 → 另一個主句（kept working）是重點。"},
+ {t:"quiz",q:"She kept working, though she was tired. — 這句的重點是？",zh:"A, though B.（though 在句中，但還是連接詞）",o:["她繼續工作","她很累","though 後面一定比較重要","她停下來休息"],a:0,why:"though she was tired 仍是讓步子句（雖然）→ 主句 kept working 還是重點。不是放句中就代表後面重要！"},
+ {t:"quiz",q:"The vaccine needs more testing. It shows promise, though. — 作者最後想強調什麼？",zh:"A. B, though.",o:["疫苗展現了潛力","疫苗沒有用","疫苗已經成功","測試已經結束"],a:0,why:"句尾 though＝不過（轉折副詞）→ 轉折後提出的新觀點「展現潛力」是重點。"},
+ {t:"quiz",q:"If the technology proves successful, though, scientists believe… — 這個 though 是？",zh:"課文第 27–30 行",o:["不過（轉折副詞）","雖然（引導子句）","因此","例如"],a:0,why:"though 被逗號隔開、插在句子中間，後面沒有接自己的子句 → 轉折副詞「不過」。"},
+ {t:"quiz",q:"這句課文的正確理解是？",zh:"If the technology proves successful, though, scientists believe the same method could be used to develop vaccines against other viruses.",o:["雖然仍需驗證，但若成功，未來可能擴大應用","疫苗已經成功，未來可用在其他病毒","科學家認為這項技術一定會失敗","這個方法已經用在其他病毒上了"],a:0,why:"if＝如果 → 成功還是條件；could be used＝可能，不是已經發生。"},
+ {t:"quiz",q:"把課文這句的 though 拿掉，會怎樣？",zh:"If the technology proves successful, scientists believe…",o:["文法仍完整，但少了和前文對比的訊號","文法錯誤","意思完全相反","變成問句"],a:0,why:"轉折副詞拿掉，句子還是完整的；但讀者就看不出這裡在「轉回未來展望」。"},
+ {t:"quiz",q:"___ the results are promising, more testing is needed.",zh:"雖然結果很有希望，仍需要更多測試。",o:["Though","However","Despite","But"],a:0,why:"後面接子句又接主句 → 連接詞 Though；However 是副詞、Despite 是介系詞，都不能連接兩個子句。"},
+ {t:"quiz",q:"The results are promising, ___.",zh:"不過，結果仍令人期待。",o:["though","although","despite","even though"],a:0,why:"放句尾當「不過」的只有 though；although、even though 後面一定要接子句。"},
+ prepParse({s:"If the technology proves successful, though, scientists believe the same method could be used to develop vaccines against other groups of viruses in the future.",v:["believe"],cl:"If the technology proves successful,",ct:"副詞子句",ctx:"If 引導條件副詞子句；夾在中間的 though 是轉折副詞（不過），不是子句。主要動詞是 believe，不是子句裡的 proves！",lg:"條件",lgw:"if",zh:"不過，如果這項技術最終證實成功，科學家相信未來同樣的方法也可能用來研發對抗其他病毒的疫苗。",line:"Unit 1 第 27–30 行"})
+]});
+
+LEVELS.push({exam:4,em:"💉",sec:"",name:"Unit 1 文法總整理",ds:"省略 that 的名詞子句、shared 簡化、Developed 分詞構句、but／instead of",items:[
+ {t:"card",tag:"Unit 1 名詞子句",title:"三個動詞後面藏著名詞子句",chips:[["hope (that) it could help…","a"],["caution that more testing is needed","b"],["believe (that) the same method could be used…","c"]],
+  tip:"🔑 think、believe、hope、say、know 後面的 that 常被省略！看到這些動詞後面直接接「主詞＋動詞」，就是名詞子句當受詞。",ex:"Scientists believe [[(that)]] the same method could be used in the future.",zh:"科學家相信，同樣的方法未來可能派上用場。"},
+ {t:"card",tag:"Unit 1 形容詞子句簡化",title:"features shared by…：省略 which were",chips:[["features which were shared by…","b"],["→","ar"],["刪 which were","a"],["→","ar"],["features shared by…","c"]],
+  tip:"🔑 shared 是過去分詞（被動），在修飾 features，不是整句的主要動詞！主要動詞是 made use of。",ex:"a new vaccine [[designed]] with the help of artificial intelligence",zh:"一種在人工智慧協助下設計的新疫苗（＝which was designed）"},
+ {t:"card",tag:"Unit 1 分詞構句",title:"Developed…（被動）vs. using…（主動）",chips:[["Developed at Cambridge, the vaccine…","a"],["疫苗「被」研發 → p.p.","d"],["row",""],["…, using a high-pressure jet of liquid","b"],["用高壓噴射的「方式」→ V-ing","d"]],
+  tip:"🔑 先問句子的主詞和分詞是什麼關係：被做 → p.p.；自己做 → V-ing。",ex:"[[Developed]] at the University of Cambridge, the vaccine is intended to protect against many coronaviruses.",zh:"這支疫苗由劍橋大學研發，目的是對抗多種冠狀病毒。"},
+ {t:"card",tag:"Unit 1 邏輯",title:"新聞裡的轉折與保留語氣",chips:[["instead of 而不是（替代）","a"],["before 在…之前（時間）","b"],["also 此外（補充）","c"],["All in all 總而言之（總結）","d"],["but 但是（轉折）","e"],["If 如果（條件）","a"],["though 不過（轉折副詞）","b"]],
+  tip:"🔑 全篇立場：promising（有希望）≠ proven effective（已證實有效）。這是學測閱讀最常考的陷阱！",ex:"The results have raised hopes among researchers, [[but]] they caution that more testing is needed.",zh:"這些結果讓研究人員燃起希望，但他們提醒，仍需要更多測試。"},
+ {t:"quiz",q:"Researchers identified features ___ by many coronaviruses.",zh:"Unit 1 仿真題 1",o:["shared","sharing","which sharing","were shared"],a:0,why:"features which were shared → 省略 which were → shared（被動，過去分詞）。"},
+ {t:"quiz",q:"The results were promising; ___, more testing was needed.",zh:"Unit 1 仿真題 2",o:["however","therefore","moreover","for example"],a:0,why:"前面好消息、後面限制 → 轉折 however。"},
+ {t:"quiz",q:"Scientists hope ___ the vaccine will help people.",zh:"Unit 1 仿真題 3",o:["that","what","which","who"],a:0,why:"hope 後面接完整子句當受詞 → 名詞子句 that（也可以省略）。"},
+ {t:"quiz",q:"___ at Cambridge, the vaccine was designed to protect against several viruses.",zh:"Unit 1 仿真題 4",o:["Developed","Developing","To develop","Having developing"],a:0,why:"疫苗是「被研發」→ 被動分詞構句 Developed。"},
+ {t:"quiz",q:"If the technology ___ successful, it could be used more widely.",zh:"Unit 1 仿真題 5",o:["proves","prove","will prove","proving"],a:0,why:"if 條件子句用現在式代替未來；主詞 the technology 單數 → proves。prove + adj.＝證實是…"},
+ {t:"quiz",q:"If the vaccine proves ___, it will be used worldwide.",zh:"prove 當連綴動詞",o:["effective","effectively","effect","effectiveness"],a:0,why:"prove + 形容詞（證實是…）：prove successful / useful / effective。"},
+ {t:"quiz",q:"The vaccine was given through a jet of liquid instead of ___ a needle.",zh:"instead of 後面接什麼？",o:["using","use","to use","used"],a:0,why:"instead of 是介系詞 → 後面接 N 或 V-ing，不能接子句。"},
+ {t:"quiz",q:"Scientists want to stop viruses before they ___ to spread widely.",zh:"before 時間子句",o:["begin","will begin","began","beginning"],a:0,why:"before 引導時間副詞子句，用現在式代替未來。"},
+ {t:"quiz",q:"\"The results are promising.\" 這代表疫苗？",zh:"新聞的保留語氣",o:["有希望，但還沒證實有效","已經證實有效","已經失敗","已經上市"],a:0,why:"promising ≠ proven effective；後文還說 more testing is needed。"},
+ {t:"quiz",q:"Researchers made use of AI to identify features shared by many coronaviruses. — 整句的主要動詞是？",zh:"不要被分詞騙了！",o:["made (use of)","identify","shared","features"],a:0,why:"shared 是修飾 features 的過去分詞；identify 是不定詞 to identify；主要動詞是 made use of。"}
+]});
+LEVELS.push({exam:4,em:"🔍",sec:"",name:"Unit 1 句子解剖",ds:"but…caution that / believe (that) / features shared by / Developed… / using…",items:[
+ prepParse({s:"The results have raised hopes among researchers, but they caution that more testing is needed.",v:["have","raised","caution"],cl:"that more testing is needed.",ct:"名詞子句",ctx:"that 後面 more testing（S）＋ is needed（V）是完整句子，當 caution 的受詞，不是在修飾名詞。but 連接兩個主要子句，所以 have raised 和 caution 都是主要動詞。",lg:"轉折",lgw:"but",zh:"這些結果讓研究人員燃起希望，但他們提醒，仍需要更多測試。",line:"Unit 1 第 23–24 行"}),
+ prepParse({s:"Scientists believe the same method could be used to develop vaccines against other groups of viruses in the future.",v:["believe"],cl:"the same method could be used to develop vaccines against other groups of viruses in the future.",ct:"名詞子句",ctx:"believe 後面省略了 that：Scientists believe (that) the same method could be used…，整串是 believe 的受詞。",zh:"科學家相信，未來同樣的方法也可能用來研發對抗其他病毒的疫苗。",line:"Unit 1 第 27–30 行"}),
+ prepParse({s:"Researchers made use of AI to identify features shared by many coronaviruses.",v:["made"],cl:"shared by many coronaviruses.",ct:"形容詞子句",ctx:"這是「簡化」的形容詞子句：features (which were) shared by many coronaviruses。shared 是被動的過去分詞，不是主要動詞。",ante:"features",zh:"研究人員利用 AI 找出許多冠狀病毒共有的特徵。",line:"Unit 1 第 13 行"}),
+ prepParse({s:"Developed at the University of Cambridge, the vaccine is intended to protect against many different coronaviruses instead of just one.",v:["is","intended"],cl:"Developed at the University of Cambridge,",ct:"分詞構句",ctx:"還原：The vaccine, which was developed at Cambridge, … 疫苗是「被」研發 → 過去分詞。instead of just one＝而不是只對抗一種。",lg:"替代",lgw:"instead",zh:"這支由劍橋大學研發的疫苗，目的是對抗多種冠狀病毒，而不只是一種。",line:"Unit 1 第 3–6 行"}),
+ prepParse({s:"It was also given without a needle, using a high-pressure jet of liquid.",v:["was","given"],cl:"using a high-pressure jet of liquid.",ct:"分詞構句",ctx:"using 是現在分詞，補充說明施打的「方式」：用高壓液體噴射，而不是用針。",lg:"補充",lgw:"also",zh:"這支疫苗也不用針頭施打，而是利用高壓液體噴射。",line:"Unit 1 第 20 行"})
+]});
+
+// ===== 🧩 分詞構句：句庫（每關開頭暖身會輪流抽）=====
+const PC_LG=["時間","原因","條件","結果","伴隨","補充背景"];
+const PC=[
+ {src:"📰 Jane Goodall",s:"Recognizing her potential, he gave her the opportunity to take part in field research.",part:"Recognizing her potential",main:"he gave her the opportunity",who:"he（給機會的人）",whoX:["her（Jane）","the opportunity","field research"],pv:"主動",lg:"原因",rest:"Because he recognized her potential, he gave her the opportunity…",restX:["Because she recognized her potential, he gave her the opportunity…","Although he recognized her potential, he gave her the opportunity…","Her potential was recognized, so she gave him the opportunity…"],zh:"他看出她的潛力，便給她參與田野研究的機會。",why:"看出潛力的是主句主詞 he（主動 → V-ing）。「看出潛力」合理解釋「為什麼給機會」→ 原因。注意：Recognizing 本身不等於 because，是上下文讓它變成原因。"},
+ {src:"📰 Unit 1 疫苗",s:"Developed at the University of Cambridge, the vaccine is intended to protect against many different coronaviruses.",part:"Developed at the University of Cambridge",main:"the vaccine is intended to protect…",who:"the vaccine（被研發的東西）",whoX:["the University of Cambridge","coronaviruses","研究人員自己"],pv:"被動",lg:"補充背景",rest:"The vaccine, which was developed at Cambridge, is intended to protect…",restX:["Because the vaccine developed Cambridge, it is intended to protect…","The vaccine, which developed at Cambridge, is intended to protect…","If Cambridge develops the vaccine, it will protect…"],zh:"這支在劍橋大學研發的疫苗，目的是對抗許多不同的冠狀病毒。",why:"疫苗是「被」研發 → 過去分詞 p.p.。但被動 ≠ 原因！這裡只是補充研發背景，不能翻成「因為在劍橋研發，所以…」。"},
+ {src:"📰 Unit 1 疫苗",s:"It was also given without a needle, using a high-pressure jet of liquid.",part:"using a high-pressure jet of liquid",main:"It was also given without a needle",pv:"主動",lg:"伴隨",rest:"It was given without a needle; instead, a high-pressure jet of liquid was used.",restX:["Because it used a needle, it was given with liquid.","It was given without a needle, so it caused a jet of liquid.","If it uses a jet of liquid, it will need a needle."],zh:"這支疫苗也不用針頭施打，而是利用高壓液體噴射。",why:"using 補充說明施打的「方式」：同一件事進行時，用什麼方法 → 伴隨（方式）。不是原因，也不是結果。"},
+ {src:"📰 Unit 3 Kitchen Favorites",s:"Tomatoes' natural acids supposedly reacted with the pewter plates, releasing toxic lead.",part:"releasing toxic lead",main:"Tomatoes' natural acids reacted with the pewter plates",who:"酸和盤子的「反應」（前面整件事）",whoX:["toxic lead","the pewter plates 自己","番茄的種子"],pv:"主動",lg:"結果",rest:"…reacted with the pewter plates, and this released toxic lead.",restX:["…reacted with the plates because they released toxic lead.","…reacted with the plates when lead was released by people.","…reacted with the plates if they released toxic lead."],zh:"據說番茄的天然酸與白鑞盤發生反應，釋放出有毒的鉛。",why:"先反應 → 造成 → 釋放鉛。句尾 , V-ing 很常表示「前面那件事造成的結果」。另外 supposedly＝據說，作者後面質疑這個傳說！"},
+ {src:"🧠 雙重解讀",s:"Seeing the police, the boy ran away.",part:"Seeing the police",main:"the boy ran away",who:"the boy",whoX:["the police","路人","沒有主詞"],pv:"主動",lg:"時間＋原因都通",lgOpts:["時間＋原因都通","只能是條件","只能是結果","只能是伴隨"],rest:"When / Because the boy saw the police, he ran away.",restX:["Because the police saw the boy, he ran away.","If the boy sees the police, he runs away.","The boy ran away, so he saw the police."],zh:"男孩看到警察（時／因為看到警察），就跑走了。",why:"「看到時跑走」和「因為看到才跑走」都說得通。沒有更多上下文時，兩個都保留，不要硬選一個！"},
+ {src:"✏️ 練習",s:"Feeling tired, Mary went to bed early.",part:"Feeling tired",main:"Mary went to bed early",who:"Mary",whoX:["the bed","別人","沒有主詞"],pv:"主動",lg:"原因",rest:"Because Mary felt tired, she went to bed early.",restX:["If Mary feels tired, she will go to bed.","Mary went to bed early, so she felt tired.","Although Mary felt tired, she went to bed early."],zh:"Mary 覺得累，所以很早就去睡了。",why:"累 → 所以早睡。代入 because 最通 → 原因。"},
+ {src:"✏️ 練習",s:"Walking down the street, Mary saw an old friend.",part:"Walking down the street",main:"Mary saw an old friend",who:"Mary",whoX:["an old friend","the street","兩個人一起"],pv:"主動",lg:"時間",rest:"When Mary was walking down the street, she saw an old friend.",restX:["Because Mary walked down the street, she saw an old friend.","If Mary walks down the street, she will see an old friend.","An old friend was walking, so Mary saw her."],zh:"Mary 走在街上時，看到一位老朋友。",why:"走路不是「看到朋友」的原因，只是當時正在做的事 → 時間（when）。"},
+ {src:"✏️ 練習",s:"Used properly, the medicine can be effective.",part:"Used properly",main:"the medicine can be effective",who:"the medicine（被使用的東西）",whoX:["the doctor","the patient","沒有主詞"],pv:"被動",lg:"條件",rest:"If it is used properly, the medicine can be effective.",restX:["Because the medicine used properly, it is effective.","When the medicine uses people, it is effective.","The medicine is effective, so it is used properly."],zh:"如果使用得當，這種藥會很有效。",why:"藥是「被」使用 → p.p.。can be effective 是「可能」，要先「用得對」才會有效 → 條件（if）。"},
+ {src:"✏️ 練習",s:"The glass fell to the floor, breaking into pieces.",part:"breaking into pieces",main:"The glass fell to the floor",who:"the glass",whoX:["the floor","打破杯子的人","pieces"],pv:"主動",lg:"結果",rest:"The glass fell to the floor, and as a result it broke into pieces.",restX:["The glass fell because it broke into pieces.","When the glass broke, it fell to the floor.","If the glass breaks, it will fall."],zh:"玻璃杯掉到地上，摔成碎片。",why:"先掉下去 → 才碎掉。句尾 , V-ing 常是「結果」。"},
+ {src:"✏️ 練習",s:"She sat by the window, reading a novel.",part:"reading a novel",main:"She sat by the window",who:"she",whoX:["the window","the novel","作者"],pv:"主動",lg:"伴隨",rest:"She sat by the window, and at the same time she was reading a novel.",restX:["She sat by the window because she read a novel.","She sat by the window, so she read a novel.","If she reads a novel, she sits by the window."],zh:"她坐在窗邊看小說。",why:"坐著和看書「同時」進行，誰也沒造成誰 → 伴隨（while）。"},
+ {src:"📘 B3 課本",s:"Pleased with the service, Samuel decided to write a letter of compliments.",part:"Pleased with the service",main:"Samuel decided to write a letter",who:"Samuel（被取悅的人）",whoX:["the service","the letter","店員"],pv:"被動",lg:"原因",rest:"Because Samuel was pleased with the service, he decided to write a letter…",restX:["Because the service pleased with Samuel, he wrote a letter…","If Samuel pleases the service, he will write a letter…","Samuel wrote a letter, so he was pleased."],zh:"對服務很滿意，Samuel 決定寫一封感謝信。",why:"Samuel 是「被取悅」→ p.p.。因為滿意 → 所以寫信 → 原因。"},
+ {src:"📘 B3 課本",s:"Having completed the book, the writer took a month off.",part:"Having completed the book",main:"the writer took a month off",who:"the writer",whoX:["the book","出版社","讀者"],pv:"主動",lg:"時間",rest:"After the writer had completed the book, he took a month off.",restX:["Because the book completed the writer, he took a month off.","If the writer completes the book, he will take a month off.","The writer took a month off, so he completed the book."],zh:"寫完這本書後，作家休了一個月的假。",why:"Having p.p. ＝「已經先做完」→ 先寫完、再休假 → 時間（after）。"},
+ {src:"📘 B3 課本",s:"Jay wrote Patty a letter, thanking her.",part:"thanking her",main:"Jay wrote Patty a letter",who:"Jay",whoX:["Patty","the letter","Patty 的家人"],pv:"主動",lg:"伴隨",rest:"Jay wrote Patty a letter, and in it he thanked her.",restX:["Jay wrote a letter because Patty thanked him.","Patty thanked Jay, so he wrote a letter.","If Jay thanks Patty, he will write a letter."],zh:"Jay 寫了一封信給 Patty，向她道謝。",why:"寫信的同時就在道謝 → 伴隨。thanking 的主詞是 Jay，不是 Patty！"}
+];
+function pcQ(p,type){
+ const tail=" — 「"+p.part+"」";let o,a=0,q,step;
+ if(type==="who"){q=p.s+tail+"真正的主角是？";o=[p.who].concat(p.whoX);step="步驟②：還原分詞的主詞（誰做的／誰被…）"}
+ else if(type==="pv"){q=p.s+tail+"是主動還是被動？";o=["主動 → 用 V-ing","被動 → 用 p.p."];a=p.pv==="主動"?0:1;step="步驟②：主角是「自己做」還是「被…」？"}
+ else if(type==="lg"){q=p.s+tail+"和主句是什麼關係？";o=p.lgOpts||[p.lg].concat(shuffle(PC_LG.filter(x=>x!==p.lg)).slice(0,3));step="步驟③：兩件事是先後、因果、條件，還是同時？"}
+ else{q=p.s+" — 還原成完整句子，哪個對？";o=[p.rest].concat(p.restX);step="步驟④：代入 because / when / if / and 驗證"}
+ return {t:"quiz",pc:1,exam:"🧩 分詞構句暖身｜"+p.src,q:q,zh:step,o:o,a:a,sp:p.s,full:p.s,why:p.why+"<br>🈶 "+p.zh}}
+function pcWarm(){try{save.pcs=save.pcs||{};
+ const ks=shuffle(PC.map((p,i)=>i)).sort((x,y)=>(save.pcs[x]||0)-(save.pcs[y]||0)),k=ks[0],p=PC[k];
+ const types=(p.who?["who"]:[]).concat(["pv","lg","rest"]);const n=save.pcs[k]||0;save.pcs[k]=n+1;store();
+ return pcQ(p,types[n%types.length])}catch(e){return null}}
+
+LEVELS.push({exam:4,em:"🧩",nowarm:1,sec:"🧩 分詞構句｜每一關開頭都會抽一句暖身",name:"分詞構句：四步驟判斷邏輯",ds:"找主句 → 還原主詞 → 看事件關係 → 代入連接詞",items:[
+ {t:"card",tag:"為什麼要學",title:"分詞構句＝把句子「壓縮」",chips:[["Because he recognized her potential,","d"],["→","ar"],["Recognizing her potential,","a"],["row"],["省掉連接詞","d"],["省掉重複的主詞","d"]],tip:"作者不想每次都重複 because he…，就壓縮成分詞。<br>你的工作是把它<b>解壓縮</b>：還原句子 → 確認主詞 → 判斷邏輯。",ex:"Recognizing her potential, [[he]] gave her the opportunity to take part in field research.",zh:"他看出她的潛力，便給她參與田野研究的機會。（Jane Goodall）"},
+ {t:"card",tag:"四步驟",title:"判斷邏輯不用猜，照四步走",chips:[["① 找主句","a"],["② 還原主詞＋主/被動","b"],["row"],["③ 兩件事什麼關係？","c"],["④ 代入連接詞驗證","e"]],tip:"④ 代入 because / when / if / while 看哪個最通。<br>如果兩個都通，就兩個都保留，不要硬選！",ex:"Recognizing her potential, he gave her the opportunity. → [[Because]] he recognized her potential…",zh:"代入 because 最通 → 原因"},
+ {t:"card",tag:"五種邏輯",title:"問自己一句話就分得出來",chips:[["時間：做 A 時/後，B？","b"],["原因：因為 A，所以 B？","e"],["row"],["條件：要先 A，才可能 B？","c"],["結果：A 發生，造成 B？","a"],["row"],["伴隨：做 A 的同時也做 B？","d"]],tip:"Walking home, I saw Tom.（時間）<br>Feeling sick, I stayed home.（原因）<br>Used correctly, this tool can save time.（條件）<br>He fell, breaking his arm.（結果）<br>She sat reading a book.（伴隨）",ex:"He fell, [[breaking]] his arm.",zh:"他跌倒，結果摔斷了手臂。"},
+ {t:"card",tag:"陷阱",title:"字尾只告訴你主/被動，不告訴你邏輯",chips:[["V-ing＝主角自己做","a"],["p.p.＝主角被…","b"],["row"],["Developed ≠ 因為","e"]],tip:"Developed at Cambridge 只說明疫苗「被研發」。<br>它是在補充背景，不是「因為在劍橋研發，所以…」。<br>邏輯要看<b>事件之間的關係</b>，不是看字尾。",ex:"Developed at the University of Cambridge, [[the vaccine]] is intended to protect against many coronaviruses.",zh:"這支在劍橋研發的疫苗，目的是對抗多種冠狀病毒。（Unit 1）"},
+ {t:"card",tag:"主詞要一樣",title:"分詞的主角＝主句的主詞",chips:[["✗ Although being unemployed, life must go on.","e"],["row"],["✓ Although I am unemployed, life must go on.","a"]],tip:"失業的是「我」，不是 life。<br>主詞不一樣就不能省，要寫回完整子句。<br>讀文章時也一樣：<b>先確認誰做的，才不會把行動者搞錯</b>。",ex:"Recognizing her potential, he gave her the opportunity. → 看出潛力的是 [[he]]",zh:"不是 her！"},
+ pcQ(PC[0],"who"),pcQ(PC[0],"pv"),pcQ(PC[0],"lg"),pcQ(PC[0],"rest"),
+ pcQ(PC[1],"who"),pcQ(PC[1],"pv"),pcQ(PC[1],"lg"),
+ pcQ(PC[3],"who"),pcQ(PC[3],"lg"),
+ pcQ(PC[2],"lg"),
+ pcQ(PC[5],"lg"),pcQ(PC[6],"lg"),pcQ(PC[7],"lg"),pcQ(PC[8],"lg"),pcQ(PC[9],"lg"),
+ pcQ(PC[4],"lg"),
+ {t:"quiz",exam:"🧩 分辨一下",q:"Researchers made use of AI to identify features shared by many coronaviruses. — shared by… 是什麼？",zh:"它前面緊貼著名詞 features",o:["修飾 features 的分詞（簡化形容詞子句）","分詞構句","主要動詞","不定詞"],a:0,sp:"Researchers made use of AI to identify features shared by many coronaviruses.",full:"Researchers made use of AI to identify features shared by many coronaviruses.",why:"緊貼在名詞後面、說明「哪種特徵」→ features (which were) shared by…。分詞構句是用逗號隔開、說明主句的「主詞」。"},
+ {t:"quiz",exam:"🧩 找錯",q:"Which sentence is WRONG?",zh:"檢查：分詞的主角＝主句主詞嗎？",o:["Although being unemployed, life must go on.","Feeling tired, Mary went to bed early.","Used properly, the medicine can be effective.","Recognizing her potential, he gave her the opportunity."],a:0,full:"Although I am unemployed, life must go on.",why:"失業的是「我」，不是 life。主詞不同不能省 → Although I am unemployed, life must go on."}
+]});
+
 // ===== 日漫風音效與特效 =====
 function T(fn){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();fn(ac.currentTime)}catch(e){}}
 function osc(type,f0,f1,t,d,a){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+d);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(a,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+.05)}
@@ -573,7 +773,7 @@ function fillAns(q,ans){const p=ans.split(" … ");return q.replace("___",p[0]).
 function buildIndex(){const out=[],seen={};LEVELS.forEach((l,li)=>{if(l.words){l.words.forEach((w,ii)=>out.push({k:"e",t:w.ex.replace(/\[\[|\]\]/g,""),zh:w.exzh,opts:(w.mk||[]).map(x=>x[1]).join(" "),li,ii}));return}l.items.forEach((it,ii)=>{
  if(it.t==="card"){it.chips.forEach(c=>{if(c[0]==="row"||c[1]==="ar"||!/[a-z]/i.test(c[0]))return;const key=c[0].toLowerCase();if(seen[key])return;seen[key]=1;out.push({k:"w",t:c[0],li,ii})});
   out.push({k:"e",t:it.ex.replace(/\[\[|\]\]/g,""),zh:it.zh,li,ii})}
- else{if(/[\u4e00-\u9fff]/.test(it.q))return;const ans=it.o[it.a];out.push({k:"q",t:fillAns(it.q,ans),ans,why:it.why,zh:it.zh,opts:it.o.join(" "),li,ii})}})});
+ else if(it.t==="parse"){out.push({k:"e",t:it.s,zh:it.zh,li,ii})}else{if(/[\u4e00-\u9fff]/.test(it.q))return;const ans=it.o[it.a];out.push({k:"q",t:fillAns(it.q,ans),ans,why:it.why,zh:it.zh,opts:it.o.join(" "),li,ii})}})});
  const items=out.slice();
  GLOSS.forEach(g=>{const w=g[0].toLowerCase(),re=new RegExp("\\b"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));
   const hit=items.find(x=>re.test((x.t+" "+(x.opts||"")).toLowerCase()));
@@ -619,22 +819,22 @@ let TAB=1;try{TAB=+localStorage.getItem("b3tab")||1}catch(e){}
 function setTab(t){TAB=t;try{localStorage.setItem("b3tab",t)}catch(e){}SFX.whoosh();home()}
 function home(){L=null;upStars();window.scrollTo(0,0);
  const ids=LEVELS.map((l,i)=>i).filter(i=>(LEVELS[i].exam||1)===TAB),done=ids.filter(i=>save.done[i]).length,pct=Math.round(done/ids.length*100);
- const sub=TAB===1?"B3 L1～L3・R1・考古題・高頻字彙":TAB===2?"B3 L4～L6・R2 單字・片語・句型":"歷屆學測真題・字義延伸＋搭配";
+ const sub=TAB===1?"B3 L1～L3・R1・考古題・高頻字彙":TAB===2?"B3 L4～L6・R2 單字・片語・句型":TAB===3?"歷屆學測真題・字義延伸＋搭配":"雜誌精讀・圈動詞→框子句→標邏輯";
  app.innerHTML=`<div class="hero"><div class="arch"><img src="${ART}" alt=""></div><div><div class="orn">✦ ✧ ✦</div><h1>段考考點闖關</h1><div class="sub">${sub}<br>一次一關，全部用點的</div></div></div>
- <div class="tabs"><button class="tb ${TAB===1?"on":""}" onclick="setTab(1)">📘 第一次段考</button><button class="tb ${TAB===2?"on":""}" onclick="setTab(2)">📗 第二次段考</button><button class="tb ${TAB===3?"on":""}" onclick="setTab(3)">🎯 學測真題</button></div>
- <div class="prog"><div class="pt">🏆 已破 ${done} / ${ids.length} 關</div><div class="bar"><i style="width:${pct}%"></i></div></div>
+ <div class="tabs"><button class="tb ${TAB===1?"on":""}" onclick="setTab(1)">📘 第一次段考</button><button class="tb ${TAB===2?"on":""}" onclick="setTab(2)">📗 第二次段考</button><button class="tb ${TAB===3?"on":""}" onclick="setTab(3)">🎯 學測真題</button><button class="tb ${TAB===4?"on":""}" onclick="setTab(4)">📰 雜誌讀法</button></div>
+ <div class="prog"><div class="pt">🏆 已破 ${done} / ${ids.length} 關</div><div class="bar"><i style="width:${pct}%"></i></div><div class="pt" style="margin-top:8px;font-size:16px">🧩 分詞構句暖身：一次答對 ${save.pcn||0} 題・每關開頭都會抽一句</div></div>
  <button class="sbtn" onclick="searchPage()">🔍 查單字・查題目（${GLOSS.length} 字）</button><div class="map">`+
  ids.map((i,k)=>{const l=LEVELS[i];return `${l.sec?`<div class="sec">${l.sec}</div>`:""}<button class="lv" onclick="start(${i})"><span class="em">${l.em}</span><span><div class="nm">第 ${k+1} 關｜${l.name}</div><div class="ds">${l.ds}</div></span><span class="ck">${save.done[i]?"🏅":"▶️"}</span></button>`}).join("")+`</div>`}
 
 function mkQueue(i){const l=LEVELS[i];return l.words?buildWordQueue(l):l.items.map(x=>Object.assign({},x))}
-function start(i){sTap();L=i;queue=mkQueue(i);pos=0;combo=0;if(LEVELS[i].words)LEVELS[i].words.forEach(w=>realURL(w.w));show()}
+function start(i){sTap();L=i;queue=mkQueue(i);if(!LEVELS[i].nowarm){const w=pcWarm();if(w)queue.unshift(w)}pos=0;combo=0;if(LEVELS[i].words)LEVELS[i].words.forEach(w=>realURL(w.w));show()}
 
 function topbar(){const pct=Math.round(pos/queue.length*100);
  return `<div class="top"><button class="back" onclick="home()">🏠</button><div class="bar"><i style="width:${pct}%"></i></div><span style="font-size:16px">${pos}/${queue.length}</span></div>`}
 
 function show(){if(pos>=queue.length)return win();
  const it=queue[pos];firstTry=true;window.scrollTo(0,0);
- it.t==="card"?card(it):it.t==="word"?wcard(it):quiz(it)}
+ it.t==="card"?card(it):it.t==="word"?wcard(it):it.t==="parse"?parse(it):quiz(it)}
 
 // ===== 重點卡 =====
 function card(it){let d=0;
@@ -650,13 +850,13 @@ function quiz(it){
  const order=it.o.map((x,i)=>i).sort(()=>Math.random()-.5);
  const q=esc(it.q).replace("___",'<span class="blank">?</span>').replace("___",'<span class="blank">?</span>');
  app.innerHTML=topbar()+`<div class="box"><span class="tag">${it.exam||"練習一下"}${it.again?'<span class="again">再見一次</span>':""}</span>
- <div class="q">${q} <button class="say" onclick="queue[pos].say?sayWord(queue[pos].say):speak(queue[pos].q)">🔊</button></div>${it.zh?`<div class="zh">${it.zh}</div>`:""}
+ <div class="q">${q} <button class="say" onclick="queue[pos].sp?speak(queue[pos].sp):queue[pos].say?sayWord(queue[pos].say):speak(queue[pos].q)">🔊</button></div>${it.zh?`<div class="zh">${it.zh}</div>`:""}
  <div class="opts">${order.map(i=>`<button class="opt" data-i="${i}" onclick="pick(this)">${esc(it.o[i])}</button>`).join("")}</div>
  <div class="cheer" id="cheer"></div><div id="after"></div></div>`;
  if(it.auto)setTimeout(()=>sayWord(it.say),320)}
 function pick(b){const it=queue[pos],i=+b.dataset.i;
  if(b.classList.contains("no")||document.querySelector(".opt.ok"))return;
- if(i===it.a){b.classList.add("ok");sOK();combo++;const gain=firstTry?2:1;save.stars+=gain;upStars();store();floatTxt(b,"+"+gain+"⭐");
+ if(i===it.a){b.classList.add("ok");sOK();if(it.pc&&firstTry){save.pcn=(save.pcn||0)+1}combo++;const gain=firstTry?2:1;save.stars+=gain;upStars();store();floatTxt(b,"+"+gain+"⭐");
   if(combo>=3&&combo%3===0){setTimeout(()=>{SFX.combo();shake();burst(combo+" COMBO🔥",1)},250)}else burst(STAMP[Math.floor(Math.random()*STAMP.length)]);
   document.getElementById("cheer").textContent=combo>=3?`🔥 ${combo} 連擊！`:CHEER[Math.floor(Math.random()*CHEER.length)];
   if(combo%3===0)rain(["✦","✧","⭐"]);if(it.wd)setTimeout(()=>it.kind==="listen"?sayWord(it.wd.w):speak(it.wd.ex,.95),350);
